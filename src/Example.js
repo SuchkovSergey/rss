@@ -12,6 +12,7 @@ export default class Example {
   }
 
   init() {
-    this.element.textContent = 'heeey';
+    this.element.textContent = 'hello, world!';
+    console.log('ehu!');
   }
 }

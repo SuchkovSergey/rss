@@ -1,8 +1,3 @@
-install: install-deps
-
-install-deps:
-	npm ci
-
 publish:
 	npm publish --dry-run
 
@@ -18,3 +13,17 @@ build:
 
 fix:
 	sudo npx eslint --fix .
+
+install:
+	install-deps install-flow-typed
+
+develop:
+	npx webpack-dev-server
+
+install-deps:
+	npm install
+
+test:
+	npm test
+
+.PHONY: test
