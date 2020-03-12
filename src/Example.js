@@ -8,6 +8,6 @@ export default class Example {
   }
 
   init() {
-    this.element.textContent = text;
+    this.element.innerHTML = text;
   }
 }
