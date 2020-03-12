@@ -1,7 +1,7 @@
-install: install-deps install-flow-typed
+install: install-deps
 
 install-deps:
-	npm install
+	npm ci
 
 publish:
 	npm publish --dry-run
@@ -15,6 +15,6 @@ lint:
 build:
 	rm -rf dist
 	NODE_ENV=production npx webpack
-	
+
 fix:
 	sudo npx eslint --fix .
