@@ -12,9 +12,3 @@ build:
 	npm run build
 fix:
 	sudo npx eslint --fix .
-test:
-	npm test
-jest:
-	npx jest --watchAll
-test-coverage:
-	npm test -- --coverage
