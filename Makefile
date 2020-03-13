@@ -27,3 +27,6 @@ test:
 	npm test
 
 .PHONY: test
+
+install-actions:
+	npm ci
