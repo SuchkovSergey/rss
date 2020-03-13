@@ -3,6 +3,7 @@
 // <label for="exampleInputInfo1">Add stream here</label>
 // <input type="info" class="form-control" id="exampleInputInfo1" aria-describedby="infoHelp">
 // </div> <button type="submit" class="btn btn-primary">Add</button></form></div>';
+import 'bootstrap';
 
 const divElement = document.createElement('div');
 divElement.classList.add('jumbotron');
