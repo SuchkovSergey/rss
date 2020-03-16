@@ -1,4 +1,6 @@
 import init from './init';
-import 'bootstrap';
+import app from './app';
+// import 'bootstrap';
 
 init();
+app();
