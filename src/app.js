@@ -10,6 +10,7 @@ const schema = yup.object().shape({
   website: yup.string().url(),
 });
 
+
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const parse = (html) => {
