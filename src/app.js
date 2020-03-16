@@ -1,23 +1,20 @@
 /* eslint no-param-reassign: "error" */
-// import yup from 'yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import { watch } from 'melanke-watchjs';
-// var cors_proxy = require('cors-anywhere'); // переписать на импорт
 import _ from 'lodash';
 
 const schema = yup.object().shape({
   website: yup.string().url(),
 });
 
-
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const parse = (html) => {
   const parser = new DOMParser();
-  const dom = parser.parseFromString(html, 'text/html');
-  const id = _.uniqueId; // неясно, будет ли работать корректно
-  const channel = dom.querySelector('channel'); // неясно, будет ли работать корректно
+  const dom = parser.parseFromString(html, 'text/xml');
+  const id = _.uniqueId(); // неясно, будет ли работать корректно
+  const channel = dom.querySelector('channel');
   const feedTitle = channel.querySelector('title').textContent;
   const feedDescription = channel.querySelector('description').textContent;
   const currentFeed = {
@@ -25,19 +22,22 @@ const parse = (html) => {
     feedTitle,
     feedDescription,
   };
-  const items = channel.querySelectorAll('item'); // вышел массив
-  const itemObjects = items.map((item) => { // каждый элемент дома переводим в объект
-    const postTitle = item.querySelector('title');
-    const postDescription = item.querySelector('description');
-    const link = item.querySelector('link');
-    return {
+  const items = channel.querySelectorAll('item');
+  const newItems = [];
+
+  items.forEach((item) => {
+    const postTitle = item.querySelector('title').textContent;
+    const postDescription = item.querySelector('description').textContent;
+    const link = item.querySelector('link').textContent;
+    const obj = {
       feedId: id,
       postTitle,
       postDescription,
       link,
     };
+    newItems.push(obj);
   });
-  return [currentFeed, itemObjects]; // [ {currentFeed}, [ {post1}, {post2}, {post3}, ... , {postn}]
+  return [currentFeed, newItems]; // [ {currentFeed}, [ {post1}, {post2}, {post3}, ... , {postn}]
 };
 
 const validate = (feedAdress, state) => schema
@@ -46,6 +46,7 @@ const validate = (feedAdress, state) => schema
     const doubleCheck = state.feedAdresses.includes(feedAdress);
     state.form.valid = validity && !doubleCheck;
   });
+
 
 const app = () => {
   const state = {
@@ -61,35 +62,33 @@ const app = () => {
     },
   };
 
-  const submitButton = document.querySelector('button[type="submit"]');
+
   const input = document.querySelector('input[id="inputInfo"]');
 
   input.addEventListener('input', (e) => {
     state.form.fields.feed = e.target.value;
-    // alert('heeey');
-    validate(e.target.value, state); // сюда возвращается промис!
-    // updateValidationState(state);
+    validate(e.target.value, state);
   });
 
   const form = document.querySelector('form');
+  const submitButton = form.querySelector('button[type="submit"]');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     state.feedAdresses.push(state.form.fields.feed);
     state.form.processState = 'adding';
-    const url = `${corsApiUrl}${state.form.fields.feed}`; // создали CORS урл
+    const url = `${corsApiUrl}${state.form.fields.feed}`;
     axios.get(url)
       .then((response) => {
-        const output = parse(response.data); // вероятно, косяк
+        const output = parse(response.data);
         const [feed, posts] = output;
         Array.prototype.push.apply(state.posts, posts);
-        // state.posts.push(posts); // не факт, что так можно пушить
         state.feeds.push(feed);
         state.form.processState = 'finished';
       })
       .catch(() => {
         console.log('Unknown argument');
-        state.form.processState = 'filling';
+        state.form.processState = 'finished';
       });
   });
 
@@ -104,6 +103,7 @@ const app = () => {
         break;
       case 'finished':
         input.value = '';
+        submitButton.disabled = false;
         break;
       default:
         throw new Error(`Unknown state: ${processState}`);
@@ -111,51 +111,51 @@ const app = () => {
   });
 
   watch(state.form, 'valid', () => {
-    const { valid } = state.form;
-    submitButton.disabled = !valid;
+    submitButton.disabled = !state.form.valid;
   });
 
   const body = document.querySelector('body');
   const divFeedsElement = document.createElement('div');
-  divFeedsElement.classList.add('list-group');
+  divFeedsElement.classList.add('list-group', 'feeds');
   body.append(divFeedsElement);
 
   const divPostsElement = document.createElement('div');
+  divPostsElement.classList.add('list-group', 'posts');
   body.append(divPostsElement);
 
 
-  watch(state, 'feeds', () => { // срабатывает при добавлении потока
+  watch(state.feeds, () => { // срабатывает при добавлении потока
     // выводим список фидов и список постов
-
     const currentFeed = state.feeds[state.feeds.length - 1];
     const { feedTitle, feedDescription } = currentFeed;
     const newAElement = document.createElement('a');
-    newAElement.href = '#';
+    newAElement.setAttribute('href', '#');
     newAElement.classList.add('list-group-item', 'list-group-item-action'); // + class 'active'
     const innerDiv = document.createElement('div');
-    innerDiv.classList.add('d-flex w-100', 'justify-content-between');
+    innerDiv.classList.add('d-flex', 'w-100', 'justify-content-between');
     innerDiv.innerHTML = `<h5 class="mb-1">${feedTitle}</h5>`;
     const newPElement = document.createElement('p');
     newPElement.classList.add('mb-1');
     newPElement.textContent = feedDescription;
     newAElement.append(innerDiv, newPElement);
-    divFeedsElement.append(newAElement); // добавили поток в список потоков
-
+    const d = document.querySelector('.feeds');
+    d.append(newAElement); // добавили поток в список потоков
 
     const currentPosts = state.posts;
     currentPosts.forEach((post) => {
       const { postTitle, postDescription, link } = post;
       const newAPostElement = document.createElement('a');
-      newAPostElement.setAttribute('href', `#${link}`);
+      newAPostElement.setAttribute('href', link);
       newAPostElement.classList.add('list-group-item', 'list-group-item-action'); // + class 'active'
       const innerPostDiv = document.createElement('div');
-      innerPostDiv.classList.add('d-flex w-100', 'justify-content-between');
+      innerPostDiv.classList.add('d-flex', 'w-100', 'justify-content-between');
       innerPostDiv.innerHTML = `<h6 class="mb-1">${postTitle}</h6>`;
       const newPPostElement = document.createElement('p');
       newPPostElement.classList.add('mb-1');
       newPPostElement.textContent = postDescription;
       newAPostElement.append(innerPostDiv, newPPostElement);
-      divPostsElement.append(newAPostElement);
+      const d1 = document.querySelector('.posts');
+      d1.append(newAPostElement);
     });
   });
 };
