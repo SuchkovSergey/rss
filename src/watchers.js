@@ -2,7 +2,7 @@
 import { watch } from 'melanke-watchjs';
 
 const watchState = (state) => {
-  const input = document.querySelector('input[id="inputInfo"]');
+  const input = document.querySelector('input[class="form-control"]');
   const form = document.querySelector('form');
   const submitButton = form.querySelector('button[type="submit"]');
 
@@ -25,7 +25,13 @@ const watchState = (state) => {
   });
 
   watch(state.form, 'valid', () => {
-    submitButton.disabled = !state.form.valid;
+    const validity = state.form.valid;
+    submitButton.disabled = !validity;
+    if (validity) {
+      input.classList.remove('is-invalid');
+    } else {
+      input.classList.add('is-invalid');
+    }
   });
 
   watch(state.feeds, () => { // срабатывает при добавлении потока
@@ -37,13 +43,13 @@ const watchState = (state) => {
     newAElement.classList.add('list-group-item', 'list-group-item-action'); // + class 'active'
     const innerDiv = document.createElement('div');
     innerDiv.classList.add('d-flex', 'w-100', 'justify-content-between');
-    innerDiv.innerHTML = `<h5 class="mb-1">${feedTitle}</h5>`;
+    innerDiv.innerHTML = `<h4 class="mb-1">${feedTitle}</h4>`;
     const newPElement = document.createElement('p');
     newPElement.classList.add('mb-1');
     newPElement.textContent = feedDescription;
     newAElement.append(innerDiv, newPElement);
-    const d = document.querySelector('.feeds');
-    d.append(newAElement); // добавили поток в список потоков
+    const feedDiv = document.querySelector('.feeds');
+    feedDiv.append(newAElement); // добавили поток в список потоков
 
     const currentPosts = state.posts;
     currentPosts.forEach((post) => {
@@ -58,8 +64,8 @@ const watchState = (state) => {
       newPPostElement.classList.add('mb-1');
       newPPostElement.textContent = postDescription;
       newAPostElement.append(innerPostDiv, newPPostElement);
-      const d1 = document.querySelector('.posts');
-      d1.append(newAPostElement);
+      const postsDiv = document.querySelector('.posts');
+      postsDiv.append(newAPostElement);
     });
   });
 };
