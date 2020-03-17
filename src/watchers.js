@@ -1,6 +1,7 @@
 /* eslint no-param-reassign: "error" */
 import { watch } from 'melanke-watchjs';
 
+
 const watchState = (state) => {
   const input = document.querySelector('input[class="form-control"]');
   const form = document.querySelector('form');
@@ -29,7 +30,6 @@ const watchState = (state) => {
   });
 
 
-
   watch(state.form, 'valid', () => {
     const validity = state.form.valid;
     submitButton.disabled = !validity;
@@ -42,6 +42,21 @@ const watchState = (state) => {
 
   watch(state.feeds, () => { // срабатывает при добавлении потока
     // выводим список фидов и список постов
+
+    const feedDiv = document.querySelector('.feeds');
+    const postsDiv = document.querySelector('.posts');
+
+
+    if (state.feeds.length === 1) {
+      const feedHeadDiv = document.querySelector('.feedHeadDiv');
+      feedHeadDiv.textContent = 'Feeds';
+      // feedHeadDiv.classList.add('shadow', 'p-3', 'mb-5', 'bg-white', 'rounded');
+      const postsHeadDiv = document.querySelector('.postsHeadDiv');
+      postsHeadDiv.textContent = 'Posts';
+      // postsHeadDiv.classList.add('shadow', 'p-3', 'mb-5', 'bg-white', 'rounded');
+    }
+
+
     const currentFeed = state.feeds[state.feeds.length - 1];
     const { feedTitle, feedDescription } = currentFeed;
     const newAElement = document.createElement('a');
@@ -54,7 +69,7 @@ const watchState = (state) => {
     newPElement.classList.add('mb-1');
     newPElement.textContent = feedDescription;
     newAElement.append(innerDiv, newPElement);
-    const feedDiv = document.querySelector('.feeds');
+
     feedDiv.append(newAElement); // добавили поток в список потоков
 
     const currentPosts = state.posts;
@@ -70,8 +85,8 @@ const watchState = (state) => {
       newPPostElement.classList.add('mb-1');
       newPPostElement.textContent = postDescription;
       newAPostElement.append(innerPostDiv, newPPostElement);
-      const postsDiv = document.querySelector('.posts');
-      postsDiv.append(newAPostElement);
+
+      postsDiv.prepend(newAPostElement);
     });
   });
 };

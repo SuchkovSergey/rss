@@ -1,45 +1,38 @@
 /* eslint no-param-reassign: "error" */
-import * as yup from 'yup';
 import axios from 'axios';
 import { watch } from 'melanke-watchjs';
 import _ from 'lodash';
 import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
-import parse from './utils';
+import { parse, validate } from './utils';
 
-const schema = yup.object().shape({
-  website: yup.string().url(),
-});
+const languages = {
+  russianLang: 'ru',
+  englishLang: 'en',
+  spanishLang: 'esp',
+  deutschLang: 'de',
+};
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
-
-const validate = (feedAdress, state) => schema
-  .isValid({ website: feedAdress })
-  .then((validity) => {
-    const doubleCheck = state.feedAdresses.includes(feedAdress);
-    state.form.valid = validity && !doubleCheck;
-  });
-
-  // когда пустое поле ввода при нажатии еще раз добавляется тот же поток
 
 const app = () => {
   i18next.init({
     lng: 'en',
     debug: true,
     resources,
-  }).then((err, t) => {
+  }).then((_err, _t) => {
     updateContent();
   });
 
   const state = {
-    feedAdresses: [],
+    addedURLs: [],
     feeds: [],
     posts: [],
-    errors: [],
+    errors: [], // дополнить ошибки
     currentLang: 'English',
     form: {
-      processState: 'filling',
+      processState: 'finished',
       fields: {
         feed: '',
       },
@@ -59,7 +52,7 @@ const app = () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    state.feedAdresses.push(state.form.fields.feed);
+    state.addedURLs.push(state.form.fields.feed);
     state.form.processState = 'adding';
     const url = `${corsApiUrl}${state.form.fields.feed}`;
     axios.get(url)
@@ -77,51 +70,84 @@ const app = () => {
       });
   });
 
+  const checkForPosts = (urls) => {
+    urls.forEach((url) => {
+      const corsUrl = `${corsApiUrl}${url}`;
+      axios.get(corsUrl)
+        .then((response) => {
+          const output = parse(response.data);
+          const [feed, posts] = output;
+          // const currentPosts = state.posts.map((e) => e.postTitle);
+
+          const difPosts = _.difference(posts, state.posts);
+          Array.prototype.push.apply(state.posts, difPosts);
+        })
+        .catch(() => {
+          state.form.processState = 'finished';
+          throw new Error(i18next.t('network.error'));
+        });
+    });
+    setTimeout(checkForPosts, 5000, state.addedURLs);
+  };
+
+  setTimeout(checkForPosts, 5000, state.addedURLs);
+
   const body = document.querySelector('body');
 
-  const divFeedsElement = document.createElement('div');
-  divFeedsElement.classList.add('list-group', 'feeds');
+  const containerDiv = document.createElement('div');
+  containerDiv.classList.add('container-fluid');
 
-  const feedHead = document.createElement('div');
-  feedHead.classList.add('alert', 'alert-info');
-  feedHead.setAttribute('id', 'feedHead');
-  feedHead.setAttribute('role', 'alert');
+  const rowDiv = document.createElement('div');
+  rowDiv.classList.add('row');
 
+  const feedDiv = document.createElement('div');
+  feedDiv.classList.add('col-md-3', 'feeds');
 
-  const postsHead = document.createElement('div');
-  postsHead.classList.add('alert', 'alert-info');
-  postsHead.setAttribute('id', 'postsHead');
-  postsHead.setAttribute('role', 'alert');
+  const postsDiv = document.createElement('div');
+  postsDiv.classList.add('col-md-9', 'posts');
 
-  body.append(feedHead, divFeedsElement);
+  rowDiv.append(feedDiv, postsDiv);
+  containerDiv.append(rowDiv);
 
-  const divPostsElement = document.createElement('div');
-  divPostsElement.classList.add('list-group', 'posts');
+  body.append(containerDiv);
 
-  body.append(postsHead, divPostsElement);
+  const langs = Object.keys(languages);
 
-  const rusButton = document.getElementById('rusButton');
-  rusButton.addEventListener('click', () => {
-    state.currentLang = 'Русский';
-    console.log(state.currentLang);
-    // state.currentLang = i18next.t('russianLang');
-    i18next.changeLanguage('ru');
+  langs.forEach((lang) => {
+    const currentButton = document.getElementById(lang);
+    currentButton.addEventListener('click', () => {
+      state.currentLang = i18next.t(lang);
+      i18next.changeLanguage(languages[lang]);
+    });
   });
 
-  const engButton = document.getElementById('engButton');
-  engButton.addEventListener('click', () => {
-    state.currentLang = 'English';
-    console.log(state.currentLang);
-    // state.currentLang = i18next.t('englishLang');
-    i18next.changeLanguage('en');
-  
-  });
-
+  const feedHeadDiv = document.createElement('div');
+  feedHeadDiv.classList.add('feedHeadDiv');
+  feedDiv.append(feedHeadDiv);
+  const postsHeadDiv = document.createElement('div');
+  postsHeadDiv.classList.add('postsHeadDiv');
+  postsDiv.append(postsHeadDiv);
 
   watch(state, watchState(state));
 };
 
+const updateContent = () => {
+  document.querySelector('h2').innerHTML = i18next.t('header2');
+  document.querySelector('h3').innerHTML = i18next.t('header3');
+  document.querySelector('input[class="form-control"]').placeholder = i18next.t('inputPlaceholder'); // не факт
+  document.querySelector('button[type="submit"]').innerHTML = i18next.t('addButton');
+  if (document.querySelector('.feedHeadDiv')) {
+    document.querySelector('.feedHeadDiv').textContent = i18next.t('feeds');
+    document.querySelector('.postsHeadDiv').textContent = i18next.t('posts');
+  }
+};
+
+i18next.on('languageChanged', () => {
+  updateContent();
+});
+
 export default app;
+
 
 /*
 <a href="#" class="list-group-item list-group-item-action active">
@@ -148,26 +174,3 @@ export default app;
   </a>
 </div>;
 */
-
-
-const updateContent = () => {
-  document.querySelector('h2').innerHTML = i18next.t('headerText');
-  document.querySelector('input[class="form-control"]').placeholder = i18next.t('inputPlaceholder'); // не факт
-  document.querySelector('button[type="submit"]').innerHTML = i18next.t('addButton');
-  if (document.getElementById('feedHead')) {
-    document.getElementById('feedHead').textContent = i18next.t('feeds');
-  document.getElementById('postsHead').textContent = i18next.t('posts');
-  }
-  
-
-  // document.getElementById('output').innerHTML = i18next.t('key');
-};
-
-
-const changeLng = (lng) => {
-  i18next.changeLanguage(lng);
-};
-
-i18next.on('languageChanged', () => {
-  updateContent();
-});

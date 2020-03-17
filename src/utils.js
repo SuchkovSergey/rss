@@ -1,3 +1,6 @@
+/* eslint no-param-reassign: "error" */
+import * as yup from 'yup';
+
 // The function "parse" parses html (string) to array,
 // where first element is feed object
 // the second one - array of post objects
@@ -41,4 +44,15 @@ const parse = (html) => {
   return [currentFeed, newItems];
 };
 
-export default parse;
+const schema = yup.object().shape({
+  website: yup.string().url(),
+});
+
+const validate = (feedAdress, state) => schema
+  .isValid({ website: feedAdress })
+  .then((validity) => {
+    const doubleCheck = state.feedAdresses.includes(feedAdress);
+    state.form.valid = validity && !doubleCheck;
+  });
+
+export { parse, validate };
