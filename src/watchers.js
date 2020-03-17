@@ -6,6 +6,10 @@ const watchState = (state) => {
   const form = document.querySelector('form');
   const submitButton = form.querySelector('button[type="submit"]');
 
+  watch(state, 'currentLang', () => {
+    document.getElementById('dropButton').textContent = state.currentLang;
+  });
+
   watch(state.form, 'processState', () => {
     const { processState } = state.form;
     switch (processState) {
@@ -17,12 +21,14 @@ const watchState = (state) => {
         break;
       case 'finished':
         input.value = '';
-        submitButton.disabled = false;
+        submitButton.disabled = true;
         break;
       default:
         throw new Error(`Unknown state: ${processState}`);
     }
   });
+
+
 
   watch(state.form, 'valid', () => {
     const validity = state.form.valid;

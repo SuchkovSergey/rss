@@ -3,43 +3,16 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { watch } from 'melanke-watchjs';
 import _ from 'lodash';
+import i18next from 'i18next';
 import watchState from './watchers';
+import resources from './locales';
+import parse from './utils';
 
 const schema = yup.object().shape({
   website: yup.string().url(),
 });
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
-
-const parse = (html) => {
-  const parser = new DOMParser();
-  const dom = parser.parseFromString(html, 'text/xml');
-  const id = _.uniqueId(); // неясно, будет ли работать корректно
-  const channel = dom.querySelector('channel');
-  const feedTitle = channel.querySelector('title').textContent;
-  const feedDescription = channel.querySelector('description').textContent;
-  const currentFeed = {
-    id,
-    feedTitle,
-    feedDescription,
-  };
-  const items = channel.querySelectorAll('item');
-  const newItems = [];
-
-  items.forEach((item) => {
-    const postTitle = item.querySelector('title').textContent;
-    const postDescription = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
-    const obj = {
-      feedId: id,
-      postTitle,
-      postDescription,
-      link,
-    };
-    newItems.push(obj);
-  });
-  return [currentFeed, newItems]; // [ {currentFeed}, [ {post1}, {post2}, {post3}, ... , {postn}]
-};
 
 const validate = (feedAdress, state) => schema
   .isValid({ website: feedAdress })
@@ -48,12 +21,23 @@ const validate = (feedAdress, state) => schema
     state.form.valid = validity && !doubleCheck;
   });
 
+  // когда пустое поле ввода при нажатии еще раз добавляется тот же поток
 
 const app = () => {
+  i18next.init({
+    lng: 'en',
+    debug: true,
+    resources,
+  }).then((err, t) => {
+    updateContent();
+  });
+
   const state = {
     feedAdresses: [],
-    feeds: [], // связь с постами - через id
+    feeds: [],
     posts: [],
+    errors: [],
+    currentLang: 'English',
     form: {
       processState: 'filling',
       fields: {
@@ -66,6 +50,7 @@ const app = () => {
   const input = document.querySelector('input[id="inputInfo"]');
 
   input.addEventListener('input', (e) => {
+    state.form.processState = 'filling';
     state.form.fields.feed = e.target.value;
     validate(e.target.value, state);
   });
@@ -84,62 +69,72 @@ const app = () => {
         Array.prototype.push.apply(state.posts, posts);
         state.feeds.push(feed);
         state.form.processState = 'finished';
+        state.form.fields.feed = '';
       })
       .catch(() => {
         state.form.processState = 'finished';
-        throw new Error('There is a problem with a net');
+        throw new Error('There is a problem with a connection');
       });
   });
 
   const body = document.querySelector('body');
+
   const divFeedsElement = document.createElement('div');
   divFeedsElement.classList.add('list-group', 'feeds');
-  body.append(divFeedsElement);
+
+  const feedHead = document.createElement('div');
+  feedHead.classList.add('alert', 'alert-info');
+  feedHead.setAttribute('id', 'feedHead');
+  feedHead.setAttribute('role', 'alert');
+
+
+  const postsHead = document.createElement('div');
+  postsHead.classList.add('alert', 'alert-info');
+  postsHead.setAttribute('id', 'postsHead');
+  postsHead.setAttribute('role', 'alert');
+
+  body.append(feedHead, divFeedsElement);
 
   const divPostsElement = document.createElement('div');
   divPostsElement.classList.add('list-group', 'posts');
-  body.append(divPostsElement);
+
+  body.append(postsHead, divPostsElement);
+
+  const rusButton = document.getElementById('rusButton');
+  rusButton.addEventListener('click', () => {
+    state.currentLang = 'Русский';
+    console.log(state.currentLang);
+    // state.currentLang = i18next.t('russianLang');
+    i18next.changeLanguage('ru');
+  });
+
+  const engButton = document.getElementById('engButton');
+  engButton.addEventListener('click', () => {
+    state.currentLang = 'English';
+    console.log(state.currentLang);
+    // state.currentLang = i18next.t('englishLang');
+    i18next.changeLanguage('en');
+  
+  });
+
 
   watch(state, watchState(state));
 };
 
-
-// <a href="#" class="list-group-item list-group-item-action active">
-//   <div class="d-flex w-100 justify-content-between">
-//     <h5 class="mb-1">Feed Title 1</h5>
-//   </div>
-//   <p class="mb-1">Description 1</p>
-// </a>
-
-
-/* Работа парсера
-принимает на вход строку html
-использует DOMParser для перевода строки в ДОМ
-создает массив в виде: [ {currentFeed}, [ {post1}, {post2}, ... , {postn}]
-
-const currentFeed = { // такой объект один
-  id,
-  feedTitle,
-  feedDescription,
-}
-const post = { // таких объектов будет несколько
-  feedId,
-  postTitle,
-  postDescription,
-  link,
-}
-*/
-
 export default app;
 
-// Структура ответного HTML
-// <channel> <title> <description> <item> <item> <item> <item> <item> </channel>
-// <item> <title> <description> <link> </item>
-
-// _.uniqueId();
-// // => '105'
-
 /*
+<a href="#" class="list-group-item list-group-item-action active">
+  <div class="d-flex w-100 justify-content-between">
+    <h5 class="mb-1">Feed Title 1</h5>
+  </div>
+  <p class="mb-1">Description 1</p>
+</a>
+
+Структура ответного HTML
+<channel> <title> <description> <item> <item> <item> <item> <item> </channel>
+<item> <title> <description> <link> </item>
+
 <div class="list-group">
   <a href="#" class="list-group-item list-group-item-action active">
     <div class="d-flex w-100 justify-content-between">
@@ -149,10 +144,30 @@ export default app;
   </a>
 
   <a href="#" class="list-group-item list-group-item-action">
-    <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1">Feed Title 2</h5>
-    </div>
-    <p class="mb-1">Description 2</p>
+
   </a>
 </div>;
 */
+
+
+const updateContent = () => {
+  document.querySelector('h2').innerHTML = i18next.t('headerText');
+  document.querySelector('input[class="form-control"]').placeholder = i18next.t('inputPlaceholder'); // не факт
+  document.querySelector('button[type="submit"]').innerHTML = i18next.t('addButton');
+  if (document.getElementById('feedHead')) {
+    document.getElementById('feedHead').textContent = i18next.t('feeds');
+  document.getElementById('postsHead').textContent = i18next.t('posts');
+  }
+  
+
+  // document.getElementById('output').innerHTML = i18next.t('key');
+};
+
+
+const changeLng = (lng) => {
+  i18next.changeLanguage(lng);
+};
+
+i18next.on('languageChanged', () => {
+  updateContent();
+});
