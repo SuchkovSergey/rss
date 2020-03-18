@@ -12,7 +12,7 @@ build:
 	NODE_ENV=production npx webpack
 
 fix:
-	sudo npx eslint --fix .
+	npx eslint --fix .
 
 install:
 	install-deps install-flow-typed

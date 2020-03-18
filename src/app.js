@@ -1,11 +1,12 @@
 /* eslint no-param-reassign: "error" */
+import * as yup from 'yup';
 import axios from 'axios';
 import { watch } from 'melanke-watchjs';
 import _ from 'lodash';
 import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
-import { parse, validate } from './utils';
+import parse from './utils';
 
 const languages = {
   russianLang: 'ru',
@@ -16,12 +17,52 @@ const languages = {
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
+const schema = yup.object().shape({
+  website: yup.string().url(),
+});
+
+const validate = (state) => {
+  const errors = [];
+  const url = state.form.fields.feed;
+  schema
+    .isValid({ website: url })
+    .then((validity) => {
+      if (!validity) {
+        errors.push(i18next.t('url.error'));
+      }
+    });
+  if (state.addedURLs.includes(url)) {
+    errors.push(i18next.t('hadUrlYet.error'));
+  }
+  return errors;
+};
+
+const updateValidationState = (state) => {
+  const errors = validate(state);
+  state.form.errors = errors;
+  state.form.valid = _.isEqual(errors, []);
+};
+
+const updateContent = () => {
+  document.querySelector('h2').textContent = i18next.t('header2');
+  document.querySelector('h3').textContent = i18next.t('header3');
+  document.querySelector('input[class="form-control"]').placeholder = i18next.t('inputPlaceholder');
+  document.querySelector('button[type="submit"]').textContent = i18next.t('addButton');
+  if (document.querySelector('.feedHeadDiv')) {
+    document.querySelector('.feedHeadDiv').textContent = i18next.t('feeds');
+    document.querySelector('.postsHeadDiv').textContent = i18next.t('posts');
+  }
+  if (document.querySelector('.invalid-feedback')) {
+    document.querySelector('.invalid-feedback').textContent = i18next.t('url.error'); // здесь
+  }
+};
+
 const app = () => {
   i18next.init({
     lng: 'en',
     debug: true,
     resources,
-  }).then((_err, _t) => {
+  }).then(() => {
     updateContent();
   });
 
@@ -29,25 +70,23 @@ const app = () => {
     addedURLs: [],
     feeds: [],
     posts: [],
-    errors: [], // дополнить ошибки
     currentLang: 'English',
     form: {
       processState: 'finished',
       fields: {
         feed: '',
       },
+      errors: [],
       valid: false,
     },
   };
-
   const input = document.querySelector('input[id="inputInfo"]');
 
   input.addEventListener('input', (e) => {
     state.form.processState = 'filling';
     state.form.fields.feed = e.target.value;
-    validate(e.target.value, state);
+    updateValidationState(state);
   });
-
   const form = document.querySelector('form');
 
   form.addEventListener('submit', (e) => {
@@ -66,19 +105,18 @@ const app = () => {
       })
       .catch(() => {
         state.form.processState = 'finished';
-        throw new Error('There is a problem with a connection');
+        throw new Error(i18next.t('network.error'));
       });
   });
 
-  const checkForPosts = (urls) => {
+  const checkForPosts = (urls) => { // проблемы с id
+    setTimeout(checkForPosts, 5000, state.addedURLs);
     urls.forEach((url) => {
       const corsUrl = `${corsApiUrl}${url}`;
       axios.get(corsUrl)
         .then((response) => {
           const output = parse(response.data);
-          const [feed, posts] = output;
-          // const currentPosts = state.posts.map((e) => e.postTitle);
-
+          const [, posts] = output;
           const difPosts = _.difference(posts, state.posts);
           Array.prototype.push.apply(state.posts, difPosts);
         })
@@ -87,28 +125,20 @@ const app = () => {
           throw new Error(i18next.t('network.error'));
         });
     });
-    setTimeout(checkForPosts, 5000, state.addedURLs);
   };
-
-  setTimeout(checkForPosts, 5000, state.addedURLs);
+  checkForPosts(state.addedURLs);
 
   const body = document.querySelector('body');
-
   const containerDiv = document.createElement('div');
   containerDiv.classList.add('container-fluid');
-
   const rowDiv = document.createElement('div');
   rowDiv.classList.add('row');
-
   const feedDiv = document.createElement('div');
   feedDiv.classList.add('col-md-3', 'feeds');
-
   const postsDiv = document.createElement('div');
   postsDiv.classList.add('col-md-9', 'posts');
-
   rowDiv.append(feedDiv, postsDiv);
   containerDiv.append(rowDiv);
-
   body.append(containerDiv);
 
   const langs = Object.keys(languages);
@@ -131,23 +161,11 @@ const app = () => {
   watch(state, watchState(state));
 };
 
-const updateContent = () => {
-  document.querySelector('h2').innerHTML = i18next.t('header2');
-  document.querySelector('h3').innerHTML = i18next.t('header3');
-  document.querySelector('input[class="form-control"]').placeholder = i18next.t('inputPlaceholder'); // не факт
-  document.querySelector('button[type="submit"]').innerHTML = i18next.t('addButton');
-  if (document.querySelector('.feedHeadDiv')) {
-    document.querySelector('.feedHeadDiv').textContent = i18next.t('feeds');
-    document.querySelector('.postsHeadDiv').textContent = i18next.t('posts');
-  }
-};
-
 i18next.on('languageChanged', () => {
   updateContent();
 });
 
 export default app;
-
 
 /*
 <a href="#" class="list-group-item list-group-item-action active">

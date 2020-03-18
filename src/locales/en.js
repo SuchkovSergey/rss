@@ -14,8 +14,11 @@ export default {
     network: {
       error: 'Network Problems. Try again.',
     },
+    hadUrlYet: {
+      error: 'This URL has already been added',
+    },
     url: {
-      valid: 'Value is not a valid url',
+      error: 'Value is not a valid url',
     },
 
   },

@@ -14,8 +14,11 @@ export default {
     network: {
       error: 'Проблемы с сетью. Попробуйте снова.',
     },
+    hadUrlYet: {
+      error: 'Данный URL уже добавлен',
+    },
     url: {
-      valid: 'Введенный URL некорректен',
+      error: 'Введенный URL некорректен',
     },
 
   },

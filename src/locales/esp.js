@@ -14,8 +14,11 @@ export default {
     network: {
       error: 'No se puede conectar al servidor. Intenta de nuevo',
     },
+    hadUrlYet: {
+      error: 'This URL has already been added',
+    },
     url: {
-      valid: 'La URL ingresada es incorrecta',
+      error: 'La URL ingresada es incorrecta',
     },
 
   },

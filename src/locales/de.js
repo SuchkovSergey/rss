@@ -14,8 +14,11 @@ export default {
     network: {
       error: 'Netzwerkprobleme. Versuchen Sie es erneut.',
     },
+    hadUrlYet: {
+      error: 'This URL has already been added',
+    },
     url: {
-      valid: 'Die eingegebene URL ist falsch',
+      error: 'Die eingegebene URL ist falsch',
     },
 
   },
