@@ -10,7 +10,6 @@ export default {
     deutschLang: 'Deutsch',
     feeds: 'Your feeds',
     posts: 'Your posts',
-
     network: {
       error: 'Network Problems. Try again.',
     },
@@ -20,6 +19,5 @@ export default {
     url: {
       error: 'Value is not a valid url',
     },
-
   },
 };

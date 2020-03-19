@@ -1,12 +1,20 @@
 import _ from 'lodash';
 
 /*
-The function "parse" parses html (string) to array,
-where first element is a feed object
-the second one is an array of post objects
-[ {currentFeed}, [ {post1}, {post2}, {post3}, ... , {postn} ] ]
+The structure of response html is:
+<channel> <title> <description> <item> <item> <item> <item> <item> </channel>
 
-The structure of feed and post objects is located below
+Each <item> is:
+<item> <title> <description> <link> </item>
+
+The function "parse" parses html (string) to an object with the following structure:
+
+const response = {
+  feed: currentFeed,
+  posts: arrayOfPosts,
+}
+
+The structures of currentFeed and post objects are located below
 
 const currentFeed = {
   id,
@@ -26,13 +34,13 @@ const parse = (html) => {
   const dom = parser.parseFromString(html, 'text/xml');
   const id = _.uniqueId();
   const channel = dom.querySelector('channel');
-  const currentFeed = {
+  const feed = {
     id,
     feedTitle: channel.querySelector('title').textContent,
     feedDescription: channel.querySelector('description').textContent,
   };
   const items = channel.querySelectorAll('item');
-  const newItems = [];
+  const posts = [];
   items.forEach((item) => {
     const postObj = {
       feedId: id,
@@ -40,9 +48,10 @@ const parse = (html) => {
       postDescription: item.querySelector('description').textContent,
       link: item.querySelector('link').textContent,
     };
-    newItems.push(postObj);
+    posts.push(postObj);
   });
-  return [currentFeed, newItems];
+
+  return { feed, posts };
 };
 
 export default parse;

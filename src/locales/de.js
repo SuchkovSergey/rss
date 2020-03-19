@@ -8,18 +8,16 @@ export default {
     russianLang: 'Русский',
     spanishLang: 'Español',
     deutschLang: 'Deutsch',
-    feeds: 'Deine Streams',
-    posts: 'Deine Beiträge',
-
+    feeds: 'Deine streams',
+    posts: 'Deine beiträge',
     network: {
       error: 'Netzwerkprobleme. Versuchen Sie es erneut.',
     },
     hadUrlYet: {
-      error: 'This URL has already been added',
+      error: 'Diese URL wurde bereits hinzugefügt',
     },
     url: {
       error: 'Die eingegebene URL ist falsch',
     },
-
   },
 };

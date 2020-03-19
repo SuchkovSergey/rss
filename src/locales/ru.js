@@ -8,9 +8,8 @@ export default {
     russianLang: 'Русский',
     spanishLang: 'Español',
     deutschLang: 'Deutsch',
-    feeds: 'Ваши Потоки',
-    posts: 'Ваши Посты',
-
+    feeds: 'Ваши потоки',
+    posts: 'Ваши посты',
     network: {
       error: 'Проблемы с сетью. Попробуйте снова.',
     },
@@ -20,6 +19,5 @@ export default {
     url: {
       error: 'Введенный URL некорректен',
     },
-
   },
 };

@@ -10,16 +10,14 @@ export default {
     deutschLang: 'Deutsch',
     feeds: 'Publicaciones',
     posts: 'Los flujos',
-
     network: {
       error: 'No se puede conectar al servidor. Intenta de nuevo',
     },
     hadUrlYet: {
-      error: 'This URL has already been added',
+      error: 'Esta URL ya ha sido agregada',
     },
     url: {
       error: 'La URL ingresada es incorrecta',
     },
-
   },
 };

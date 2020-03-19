@@ -39,7 +39,6 @@ const watchState = (state) => {
   });
 
   watch(state.form, 'errors', () => {
-    console.log('errors');
     const errorElement = input.nextElementSibling;
     const errorMessages = state.form.errors;
 
@@ -59,44 +58,59 @@ const watchState = (state) => {
 
   watch(state.feeds, () => {
     const feedDiv = document.querySelector('.feeds');
-    const postsDiv = document.querySelector('.posts');
-
-    if (state.feeds.length === 1) {
-      const feedHeadDiv = document.querySelector('.feedHeadDiv');
-      feedHeadDiv.textContent = 'Feeds';
-      const postsHeadDiv = document.querySelector('.postsHeadDiv');
-      postsHeadDiv.textContent = 'Posts';
+    const activeElement = feedDiv.querySelector('.active');
+    if (activeElement) {
+      activeElement.classList.remove('active');
     }
-
+    if (state.feeds.length === 1) {
+      const feedHeader = document.querySelector('.feedHeader');
+      feedHeader.textContent = 'Your feeds';
+    }
     const currentFeed = state.feeds[state.feeds.length - 1];
-    const { feedTitle, feedDescription } = currentFeed;
+    const { id, feedTitle, feedDescription } = currentFeed;
     const newAElement = document.createElement('a');
     newAElement.setAttribute('href', '#');
-    newAElement.classList.add('list-group-item', 'list-group-item-action'); // + class 'active'
+    newAElement.classList.add('list-group-item', 'list-group-item-action');
     const innerDiv = document.createElement('div');
-    innerDiv.classList.add('d-flex', 'w-100', 'justify-content-between');
-    innerDiv.innerHTML = `<h4 class="mb-1">${feedTitle}</h4>`;
-
+    const header4 = document.createElement('h4');
+    header4.classList.add('mb-1', 'feedItem');
+    header4.textContent = feedTitle;
+    innerDiv.append(header4);
     const newPElement = document.createElement('p');
     newPElement.classList.add('mb-1');
     newPElement.textContent = feedDescription;
     newAElement.append(innerDiv, newPElement);
     feedDiv.append(newAElement); // добавили поток в список потоков
 
-    const currentPosts = state.posts;
-    currentPosts.forEach((post) => {
-      const { postTitle, postDescription, link } = post;
-      const newAPostElement = document.createElement('a');
-      newAPostElement.setAttribute('href', link);
-      newAPostElement.classList.add('list-group-item', 'list-group-item-action'); // + class 'active'
-      const innerPostDiv = document.createElement('div');
-      innerPostDiv.classList.add('d-flex', 'w-100', 'justify-content-between');
-      innerPostDiv.innerHTML = `<h6 class="mb-1">${postTitle}</h6>`;
-      const newPPostElement = document.createElement('p');
-      newPPostElement.classList.add('mb-1');
-      newPPostElement.textContent = postDescription;
-      newAPostElement.append(innerPostDiv, newPPostElement);
-      postsDiv.prepend(newAPostElement);
+    newAElement.addEventListener('click', () => { // обработчики кликов на потоки
+      const idPosts = state.posts.filter((post) => post.feedId === id);
+      state.currentPosts = idPosts;
+      const active = feedDiv.querySelector('.active');
+      if (active) {
+        active.classList.remove('active');
+      }
+      newAElement.classList.add('active');
+    });
+  });
+
+  const data = ['posts', 'currentPosts'];
+
+  data.forEach((el) => {
+    watch(state, el, () => {
+      const postsDiv = document.querySelector('.posts');
+      postsDiv.innerHTML = '';
+      const currentPosts = state[el];
+      currentPosts.forEach((post) => {
+        const { postTitle, postDescription, link } = post;
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('mb-2', 'border-bottom');
+        const header5 = document.createElement('h5');
+        const newPElement = document.createElement('p');
+        header5.innerHTML = `<a href="${link}">${postTitle}</a>`;
+        newPElement.textContent = postDescription;
+        newDiv.append(header5, newPElement);
+        postsDiv.append(newDiv);
+      });
     });
   });
 };
