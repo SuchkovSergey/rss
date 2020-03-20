@@ -6,25 +6,19 @@ import _ from 'lodash';
 import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
+import { languagesInShort } from './locales/languages';
 import parse from './utils';
-
-const languages = {
-  englishLang: 'en',
-  russianLang: 'ru',
-  spanishLang: 'esp',
-  deutschLang: 'de',
-};
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const schema = yup.object().shape({
+const validationSchema = yup.object().shape({
   website: yup.string().url(),
 });
 
 const validate = (state) => {
   const errors = [];
   const url = state.form.fields.feed;
-  schema
+  validationSchema
     .isValid({ website: url })
     .then((validity) => {
       if (!validity) {
@@ -43,7 +37,7 @@ const updateValidationState = (state) => {
   state.form.valid = _.isEqual(errors, []);
 };
 
-// В формуле "updateContent" не стал отделять получение данных от их использования,
+// В функции "updateContent" не стал отделять получение данных от их использования,
 // потому что в данном случае эти данные используются строго один раз
 const updateContent = () => {
   document.querySelector('h2').textContent = i18next.t('header2');
@@ -56,9 +50,20 @@ const updateContent = () => {
   }
 };
 
-const checkForPosts = (currentState) => {
+const changeLangsInit = (currentState) => {
+  const langs = Object.keys(languagesInShort);
+  langs.forEach((lang) => {
+    const currentButton = document.getElementById(lang);
+    currentButton.addEventListener('click', () => {
+      currentState.currentLang = i18next.t(`languages.${lang}`);
+      i18next.changeLanguage(languagesInShort[lang]);
+    });
+  });
+};
+
+const checkForNewPosts = (currentState) => {
   const urls = currentState.addedURLs;
-  setTimeout(checkForPosts, 5000, currentState);
+  setTimeout(checkForNewPosts, 5000, currentState);
   urls.forEach((url) => {
     const corsUrl = `${corsApiUrl}${url}`;
     axios.get(corsUrl)
@@ -118,10 +123,10 @@ const app = () => {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const currentFeed = state.form.fields.feed;
-    state.addedURLs.push(currentFeed);
+    const currentURL = state.form.fields.feed;
+    state.addedURLs.push(currentURL);
     state.form.processState = 'adding';
-    const url = `${corsApiUrl}${currentFeed}`;
+    const url = `${corsApiUrl}${currentURL}`;
     axios.get(url)
       .then((response) => {
         const output = parse(response.data);
@@ -137,17 +142,9 @@ const app = () => {
       });
   });
 
-  Object.keys(languages).forEach((lang) => {
-    const currentButton = document.getElementById(lang);
-    currentButton.addEventListener('click', () => {
-      state.currentLang = i18next.t(lang);
-      i18next.changeLanguage(languages[lang]);
-    });
-  });
-
-  checkForPosts(state);
+  changeLangsInit(state);
+  checkForNewPosts(state);
   watch(state, watchState(state));
 };
-
 
 export default app;

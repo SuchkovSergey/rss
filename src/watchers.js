@@ -7,7 +7,8 @@ const watchState = (state) => {
   const submitButton = form.querySelector('button[type="submit"]');
 
   watch(state, 'currentLang', () => {
-    document.getElementById('dropButton').textContent = state.currentLang;
+    const dropButton = document.getElementById('dropButton');
+    dropButton.textContent = state.currentLang;
   });
 
   watch(state.form, 'processState', () => {
@@ -29,9 +30,9 @@ const watchState = (state) => {
   });
 
   watch(state.form, 'valid', () => {
-    const validity = state.form.valid;
-    submitButton.disabled = !validity;
-    if (validity) {
+    const { valid } = state.form;
+    submitButton.disabled = !valid;
+    if (valid) {
       input.classList.remove('is-invalid');
     } else {
       input.classList.add('is-invalid');
@@ -51,16 +52,16 @@ const watchState = (state) => {
     }
     const feedbackElement = document.createElement('div');
     feedbackElement.classList.add('invalid-feedback', 'text-warning');
-    feedbackElement.innerHTML = errorMessages.join('. ');
+    feedbackElement.textContent = errorMessages.join('. ');
     input.classList.add('is-invalid');
     input.after(feedbackElement);
   });
 
   watch(state.feeds, () => {
-    const feedDiv = document.querySelector('.feeds');
-    const activeElement = feedDiv.querySelector('.active');
-    if (activeElement) {
-      activeElement.classList.remove('active');
+    const feedDivElement = document.querySelector('.feeds');
+    const activeFeedElement = feedDivElement.querySelector('.active');
+    if (activeFeedElement) {
+      activeFeedElement.classList.remove('active');
     }
     if (state.feeds.length === 1) {
       const feedHeader = document.querySelector('.feedHeader');
@@ -80,36 +81,36 @@ const watchState = (state) => {
     newPElement.classList.add('mb-1');
     newPElement.textContent = feedDescription;
     newAElement.append(innerDiv, newPElement);
-    feedDiv.append(newAElement); // добавили поток в список потоков
+    feedDivElement.append(newAElement); // добавили поток в список потоков
 
     newAElement.addEventListener('click', () => { // обработчики кликов на потоки
-      const idPosts = state.posts.filter((post) => post.feedId === id);
-      state.currentPosts = idPosts;
-      const active = feedDiv.querySelector('.active');
-      if (active) {
-        active.classList.remove('active');
+      const currentPosts = state.posts.filter((post) => post.feedId === id);
+      state.currentPosts = currentPosts;
+      const activeElement = feedDivElement.querySelector('.active');
+      if (activeElement) {
+        activeElement.classList.remove('active');
       }
       newAElement.classList.add('active');
     });
   });
 
-  const data = ['posts', 'currentPosts'];
+  const dataFields = ['posts', 'currentPosts'];
 
-  data.forEach((el) => {
+  dataFields.forEach((el) => {
     watch(state, el, () => {
       const postsDiv = document.querySelector('.posts');
       postsDiv.innerHTML = '';
       const currentPosts = state[el];
       currentPosts.forEach((post) => {
         const { postTitle, postDescription, link } = post;
-        const newDiv = document.createElement('div');
-        newDiv.classList.add('mb-2', 'border-bottom');
+        const newDivElement = document.createElement('div');
+        newDivElement.classList.add('mb-2', 'border-bottom');
         const header5 = document.createElement('h5');
         const newPElement = document.createElement('p');
         header5.innerHTML = `<a href="${link}">${postTitle}</a>`;
         newPElement.textContent = postDescription;
-        newDiv.append(header5, newPElement);
-        postsDiv.append(newDiv);
+        newDivElement.append(header5, newPElement);
+        postsDiv.append(newDivElement);
       });
     });
   });

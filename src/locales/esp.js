@@ -1,13 +1,12 @@
+import { languages } from './languages';
+
 export default {
   translation: {
-    header2: 'Su agregado de RSS personal',
+    languages,
+    header2: 'Su agregador de RSS personal',
     header3: 'Agregar un flujo aquí',
     inputPlaceholder: 'Ingrese la URL correcta',
     addButton: 'Añadir',
-    englishLang: 'English',
-    russianLang: 'Русский',
-    spanishLang: 'Español',
-    deutschLang: 'Deutsch',
     feeds: 'Publicaciones',
     posts: 'Los flujos',
     network: {

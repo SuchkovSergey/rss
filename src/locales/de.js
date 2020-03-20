@@ -1,13 +1,12 @@
+import { languages } from './languages';
+
 export default {
   translation: {
+    languages,
     header2: 'Ihr persönlicher RSS-Aggregator',
     header3: 'Stream hier hinzufügen',
     inputPlaceholder: 'Geben Sie eine gültige URL ein',
     addButton: 'Hinzufügen',
-    englishLang: 'English',
-    russianLang: 'Русский',
-    spanishLang: 'Español',
-    deutschLang: 'Deutsch',
     feeds: 'Deine streams',
     posts: 'Deine beiträge',
     network: {
