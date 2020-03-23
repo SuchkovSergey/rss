@@ -1,6 +1,22 @@
 /* eslint no-param-reassign: "error" */
 import { watch } from 'melanke-watchjs';
 
+const renderPosts = (currentPosts) => {
+  const postsDiv = document.querySelector('.posts');
+  postsDiv.innerHTML = '';
+  currentPosts.forEach((post) => {
+    const { postTitle, postDescription, link } = post;
+    const newDivElement = document.createElement('div');
+    newDivElement.classList.add('mb-2', 'border-bottom');
+    const header5 = document.createElement('h5');
+    const newPElement1 = document.createElement('p');
+    header5.innerHTML = `<a href="${link}">${postTitle}</a>`;
+    newPElement1.textContent = postDescription;
+    newDivElement.append(header5, newPElement1);
+    postsDiv.append(newDivElement);
+  });
+};
+
 const watchState = (state) => {
   const input = document.querySelector('input[class="form-control"]');
   const form = document.querySelector('form');
@@ -57,7 +73,7 @@ const watchState = (state) => {
     input.after(feedbackElement);
   });
 
-  watch(state.feeds, () => {
+  watch(state, 'feeds', () => {
     const feedDivElement = document.querySelector('.feeds');
     const activeFeedElement = feedDivElement.querySelector('.active');
     if (activeFeedElement) {
@@ -85,7 +101,7 @@ const watchState = (state) => {
 
     newAElement.addEventListener('click', () => { // обработчики кликов на потоки
       const currentPosts = state.posts.filter((post) => post.feedId === id);
-      state.currentPosts = currentPosts;
+      renderPosts(currentPosts);
       const activeElement = feedDivElement.querySelector('.active');
       if (activeElement) {
         activeElement.classList.remove('active');
@@ -94,25 +110,8 @@ const watchState = (state) => {
     });
   });
 
-  const dataFields = ['posts', 'currentPosts'];
-
-  dataFields.forEach((el) => {
-    watch(state, el, () => {
-      const postsDiv = document.querySelector('.posts');
-      postsDiv.innerHTML = '';
-      const currentPosts = state[el];
-      currentPosts.forEach((post) => {
-        const { postTitle, postDescription, link } = post;
-        const newDivElement = document.createElement('div');
-        newDivElement.classList.add('mb-2', 'border-bottom');
-        const header5 = document.createElement('h5');
-        const newPElement = document.createElement('p');
-        header5.innerHTML = `<a href="${link}">${postTitle}</a>`;
-        newPElement.textContent = postDescription;
-        newDivElement.append(header5, newPElement);
-        postsDiv.append(newDivElement);
-      });
-    });
+  watch(state, 'posts', () => {
+    renderPosts(state.posts);
   });
 };
 

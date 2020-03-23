@@ -29,9 +29,9 @@ const post = {
 }
 */
 
-const parse = (html) => {
+const parse = (xml) => {
   const parser = new DOMParser();
-  const dom = parser.parseFromString(html, 'text/xml');
+  const dom = parser.parseFromString(xml, 'text/xml');
   const id = _.uniqueId();
   const channel = dom.querySelector('channel');
   const feed = {

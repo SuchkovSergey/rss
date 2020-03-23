@@ -10,6 +10,16 @@ Add stream -> Click on post -> Enjoy!
 
 You could also click on feed's title to choose posts from it.
 
+### New experience
+
+* Webpack
+* Bootstrap
+* AJAX using Axios
+* Work with events
+* DOM manipulating
+* Validation, DOMParser
+* Deploy
+
 ### Installing
 
 ```
@@ -19,6 +29,7 @@ npm install rss_aggregator
 ### Examples of URLs you could use
 ```
 https://ru.hexlet.io/blog.rss
+https://ru.hexlet.io/jobs.rss
 https://abcnews.go.com/abcnews/usheadlines
 http://feeds.bbci.co.uk/news/world/rss.xml
 http://www.cbn.com/cbnnews/world/feed/

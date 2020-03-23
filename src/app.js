@@ -11,28 +11,33 @@ import parse from './utils';
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const validationSchema = yup.object().shape({
-  website: yup.string().url(),
-});
-
-const validate = (state) => {
+const validate = (currentUrl, addedURLs) => {
+  const validationSchema = yup.object().shape({
+    website: yup.string().url(),
+    url: yup.mixed().oneOf(addedURLs),
+  });
   const errors = [];
-  const url = state.form.fields.feed;
   validationSchema
-    .isValid({ website: url })
+    .isValid({ website: currentUrl })
     .then((validity) => {
       if (!validity) {
         errors.push(i18next.t('url.error'));
       }
     });
-  if (state.addedURLs.includes(url)) {
-    errors.push(i18next.t('hadUrlYet.error'));
-  }
+  validationSchema
+    .isValid({ url: currentUrl })
+    .then((validity) => {
+      if (validity) {
+        errors.push(i18next.t('hadUrlYet.error'));
+      }
+    });
   return errors;
 };
 
 const updateValidationState = (state) => {
-  const errors = validate(state);
+  const { url } = state.form.fields;
+  const { addedURLs } = state;
+  const errors = validate(url, addedURLs);
   state.form.errors = errors;
   state.form.valid = _.isEqual(errors, []);
 };
@@ -84,29 +89,28 @@ const checkForNewPosts = (currentState) => {
   });
 };
 
-i18next.init({
-  lng: 'en',
-  debug: true,
-  resources,
-}).then(() => {
-  updateContent();
-});
-
-i18next.on('languageChanged', () => {
-  updateContent();
-});
-
 const app = () => {
+  i18next.init({
+    lng: 'en',
+    debug: true,
+    resources,
+  }).then(() => {
+    updateContent();
+  });
+
+  i18next.on('languageChanged', () => {
+    updateContent();
+  });
+
   const state = {
     addedURLs: [],
     feeds: [],
     posts: [],
-    currentPosts: [],
     currentLang: 'English',
     form: {
       processState: 'finished',
       fields: {
-        feed: '',
+        url: '',
       },
       errors: [],
       valid: false,
@@ -117,13 +121,13 @@ const app = () => {
 
   input.addEventListener('input', (e) => {
     state.form.processState = 'filling';
-    state.form.fields.feed = e.target.value;
+    state.form.fields.url = e.target.value;
     updateValidationState(state);
   });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const currentURL = state.form.fields.feed;
+    const currentURL = state.form.fields.url;
     state.addedURLs.push(currentURL);
     state.form.processState = 'adding';
     const url = `${corsApiUrl}${currentURL}`;
@@ -134,11 +138,14 @@ const app = () => {
         state.posts = [...state.posts, ...posts];
         state.feeds.push(feed);
         state.form.processState = 'finished';
-        state.form.fields.feed = '';
+        state.form.fields.url = '';
       })
-      .catch(() => {
-        state.form.processState = 'finished';
-        throw new Error(i18next.t('network.error'));
+      .catch((err) => {
+        const errorMessage = i18next.t('network.error');
+        state.form.errors = [errorMessage];
+        state.form.valid = false;
+        state.form.processState = 'filling';
+        throw err;
       });
   });
 
