@@ -91,13 +91,13 @@ const checkForNewPosts = (currentState) => {
 export { parse, updateValidationState, checkForNewPosts };
 
 /*
-The structure of response html is:
+The structure of response xml is:
 <channel> <title> <description> <item> <item> <item> <item> <item> </channel>
 
 Each <item> is:
 <item> <title> <description> <link> </item>
 
-The function "parse" parses html (string) to an object with the following structure:
+The function "parse" parses xml (string) to an object with the following structure:
 
 const response = {
   feed: currentFeed,

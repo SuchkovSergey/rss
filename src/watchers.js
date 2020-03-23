@@ -1,5 +1,6 @@
 /* eslint no-param-reassign: "error" */
 import { watch } from 'melanke-watchjs';
+import i18next from 'i18next';
 
 const renderPosts = (currentPosts) => {
   const postsDiv = document.querySelector('.posts');
@@ -58,7 +59,6 @@ const watchState = (state) => {
   watch(state.form, 'errors', () => {
     const errorElement = input.nextElementSibling;
     const errorMessages = state.form.errors;
-
     if (errorElement) {
       input.classList.remove('is-invalid');
       errorElement.remove();
@@ -81,7 +81,7 @@ const watchState = (state) => {
     }
     if (state.feeds.length === 1) {
       const feedHeader = document.querySelector('.feedHeader');
-      feedHeader.textContent = 'Your feeds';
+      feedHeader.textContent = i18next.t('feeds');
     }
     const currentFeed = state.feeds[state.feeds.length - 1];
     const { id, feedTitle, feedDescription } = currentFeed;
