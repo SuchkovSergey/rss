@@ -1,5 +1,4 @@
-// import i18next from 'i18next';
-// import resources from './locales';
+import i18next from 'i18next';
 import { languages } from './locales/languages';
 
 const dropButtonInit = () => {
@@ -9,12 +8,11 @@ const dropButtonInit = () => {
   dropButton.classList.add('btn', 'btn-info', 'dropdown-toggle', 'float-right');
   dropButton.id = 'dropButton';
   dropButton.setAttribute('data-toggle', 'dropdown');
-  dropButton.textContent = 'English'; // не получилось использовать i18next здесь
+  dropButton.textContent = 'English';
   const menuDivElement = document.createElement('div');
   menuDivElement.classList.add('dropdown-menu');
 
   const langs = Object.keys(languages);
-
   langs.forEach((lang) => {
     const langButton = document.createElement('a');
     langButton.classList.add('dropdown-item');
@@ -36,7 +34,7 @@ const headInit = () => {
   header3.classList.add('display-6', 'text-light', 'ml-1');
   const header2 = document.createElement('h2');
   header2.classList.add('text-light', 'text-center');
-  header2.textContent = 'Your personal RSS aggregator'; // не получилось использовать i18next здесь
+  header2.textContent = i18next.t('header2');
   const form = document.createElement('form');
   const divFormElement = document.createElement('div');
   divFormElement.classList.add('form-group');
@@ -44,7 +42,7 @@ const headInit = () => {
   const button = document.createElement('button');
   button.setAttribute('type', 'submit');
   button.classList.add('btn', 'btn-primary');
-  button.textContent = 'Add'; // не получилось использовать i18next здесь
+  button.textContent = i18next.t('addButton');
   form.append(divFormElement, button);
   divElement.append(dropButtonInit(), header2, header3, form);
   return divElement;
@@ -85,23 +83,3 @@ export default () => {
   const element = document.getElementById('point');
   element.append(headInit(), containerInit(), footerInit());
 };
-
-/*  There is a dropButton structure below
-
-<div class="dropdown">
-  <button class="btn btn-info dropdown-toggle" type="button"
-id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
-
-Images for 'jumbotron'
-https://images.wallpaperscraft.com/image/gradient_green_texture_131365_1920x1080.jpg
-https://images.wallpaperscraft.com/image/polygon_triangles_geometric_126824_1920x1080.jpg
-https://images.wallpaperscraft.com/image/polygon_triangles_geometric_128478_1920x1080.jpg
-https://images.wallpaperscraft.com/image/texture_triangles_abstraction_77205_1920x1080.jpg */

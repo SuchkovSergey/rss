@@ -1,46 +1,13 @@
 /* eslint no-param-reassign: "error" */
-import * as yup from 'yup';
 import axios from 'axios';
 import { watch } from 'melanke-watchjs';
-import _ from 'lodash';
 import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
 import { languagesInShort } from './locales/languages';
-import parse from './utils';
+import { parse, updateValidationState, checkForNewPosts } from './utils';
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
-
-const validate = (currentUrl, addedURLs) => {
-  const validationSchema = yup.object().shape({
-    website: yup.string().url(),
-    url: yup.mixed().oneOf(addedURLs),
-  });
-  const errors = [];
-  validationSchema
-    .isValid({ website: currentUrl })
-    .then((validity) => {
-      if (!validity) {
-        errors.push(i18next.t('url.error'));
-      }
-    });
-  validationSchema
-    .isValid({ url: currentUrl })
-    .then((validity) => {
-      if (validity) {
-        errors.push(i18next.t('hadUrlYet.error'));
-      }
-    });
-  return errors;
-};
-
-const updateValidationState = (state) => {
-  const { url } = state.form.fields;
-  const { addedURLs } = state;
-  const errors = validate(url, addedURLs);
-  state.form.errors = errors;
-  state.form.valid = _.isEqual(errors, []);
-};
 
 // В функции "updateContent" не стал отделять получение данных от их использования,
 // потому что в данном случае эти данные используются строго один раз
@@ -63,29 +30,6 @@ const changeLangsInit = (currentState) => {
       currentState.currentLang = i18next.t(`languages.${lang}`);
       i18next.changeLanguage(languagesInShort[lang]);
     });
-  });
-};
-
-const checkForNewPosts = (currentState) => {
-  const urls = currentState.addedURLs;
-  setTimeout(checkForNewPosts, 5000, currentState);
-  urls.forEach((url) => {
-    const corsUrl = `${corsApiUrl}${url}`;
-    axios.get(corsUrl)
-      .then((response) => {
-        const output = parse(response.data);
-        const { feed, posts } = output;
-        const { feedTitle } = feed;
-        const currentFeed = currentState.feeds.find((el) => el.feedTitle === feedTitle);
-        const { id } = currentFeed;
-        const newPosts = posts.map((post) => ({ ...post, feedId: id }));
-        const diffPosts = _.differenceBy(newPosts, currentState.posts, 'postTitle');
-        Array.prototype.push.apply(currentState.posts, diffPosts);
-      })
-      .catch(() => {
-        currentState.form.processState = 'finished';
-        throw new Error(i18next.t('network.error'));
-      });
   });
 };
 
