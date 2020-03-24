@@ -4,7 +4,7 @@ import { watch } from 'melanke-watchjs';
 import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
-import { languagesInShort } from './locales/languages';
+import languages from './locales/languages';
 import { parse, updateValidationState, checkForNewPosts } from './utils';
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
@@ -23,12 +23,12 @@ const updateContent = () => {
 };
 
 const changeLangsInit = (currentState) => {
-  const langs = Object.keys(languagesInShort);
+  const langs = Object.keys(languages);
   langs.forEach((lang) => {
     const currentButton = document.getElementById(lang);
     currentButton.addEventListener('click', () => {
       currentState.currentLang = i18next.t(`languages.${lang}`);
-      i18next.changeLanguage(languagesInShort[lang]);
+      i18next.changeLanguage(lang);
     });
   });
 };

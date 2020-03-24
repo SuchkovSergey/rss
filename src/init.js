@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import { languages } from './locales/languages';
+import languages from './locales/languages';
 
 const dropButtonInit = () => {
   const divElement = document.createElement('div');
@@ -16,7 +16,7 @@ const dropButtonInit = () => {
   langs.forEach((lang) => {
     const langButton = document.createElement('a');
     langButton.classList.add('dropdown-item');
-    langButton.id = lang;
+    langButton.id = lang; // en
     langButton.setAttribute('href', '#');
     langButton.textContent = languages[lang];
     menuDivElement.append(langButton);
