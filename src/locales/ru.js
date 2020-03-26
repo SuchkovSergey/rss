@@ -9,14 +9,10 @@ export default {
     addButton: 'Добавить',
     feeds: 'Ваши потоки',
     posts: 'Ваши посты',
-    network: {
-      error: 'Проблемы с сетью. Попробуйте снова.',
-    },
-    hadUrlYet: {
-      error: 'Данный URL уже добавлен',
-    },
-    url: {
-      error: 'Введенный URL некорректен',
+    errorMessages: {
+      network: 'Проблемы с сетью. Попробуйте снова.',
+      hasUrlYet: 'Данный URL уже добавлен',
+      invalidUrl: 'Введенный URL некорректен',
     },
   },
 };

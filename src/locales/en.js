@@ -9,14 +9,10 @@ export default {
     addButton: 'Add',
     feeds: 'Your feeds',
     posts: 'Your posts',
-    network: {
-      error: 'Network Problems. Try again.',
-    },
-    hadUrlYet: {
-      error: 'This URL has already been added',
-    },
-    url: {
-      error: 'Value is not a valid url',
+    errorMessages: {
+      network: 'Network Problems. Try again.',
+      hasUrlYet: 'This URL has already been added',
+      invalidUrl: 'Value is not a valid url',
     },
   },
 };

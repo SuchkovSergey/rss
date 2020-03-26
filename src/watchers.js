@@ -58,16 +58,17 @@ const watchState = (state) => {
 
   watch(state.form, 'errors', () => {
     const errorElement = input.nextElementSibling;
-    const errorMessages = state.form.errors;
+    const { errors } = state.form;
     if (errorElement) {
       input.classList.remove('is-invalid');
       errorElement.remove();
     }
-    if (errorMessages.length === 0) {
+    if (errors.length === 0) {
       return;
     }
     const feedbackElement = document.createElement('div');
     feedbackElement.classList.add('invalid-feedback', 'text-warning');
+    const errorMessages = errors.map((err) => i18next.t(`errorMessages.${err}`));
     feedbackElement.textContent = errorMessages.join('. ');
     input.classList.add('is-invalid');
     input.after(feedbackElement);

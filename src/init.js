@@ -16,7 +16,7 @@ const dropButtonInit = () => {
   langs.forEach((lang) => {
     const langButton = document.createElement('a');
     langButton.classList.add('dropdown-item');
-    langButton.id = lang; // en
+    langButton.id = lang;
     langButton.setAttribute('href', '#');
     langButton.textContent = languages[lang];
     menuDivElement.append(langButton);
@@ -38,7 +38,7 @@ const headInit = () => {
   const form = document.createElement('form');
   const divFormElement = document.createElement('div');
   divFormElement.classList.add('form-group');
-  divFormElement.innerHTML = '<input class="form-control" id="inputInfo" placeholder="">'; // <label></label>
+  divFormElement.innerHTML = '<input class="form-control" id="inputInfo" placeholder="">';
   const button = document.createElement('button');
   button.setAttribute('type', 'submit');
   button.classList.add('btn', 'btn-primary');

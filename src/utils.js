@@ -1,35 +1,23 @@
 /* eslint no-param-reassign: "error" */
+// import * as yup from 'yup';
 import _ from 'lodash';
-import i18next from 'i18next';
-import * as yup from 'yup';
 import axios from 'axios';
+import { string, mixed } from 'yup';
 
 const validate = (currentUrl, addedURLs) => {
-  const validationSchema = yup.object().shape({
-    website: yup.string().url(),
-    url: yup.mixed().oneOf(addedURLs),
-  });
   const errors = [];
-  validationSchema
-    .isValid({ website: currentUrl })
-    .then((validity) => {
-      if (!validity) {
-        errors.push(i18next.t('url.error'));
-      }
-    });
-  validationSchema
-    .isValid({ url: currentUrl })
-    .then((validity) => {
-      if (validity) {
-        errors.push(i18next.t('hadUrlYet.error'));
-      }
-    });
+  string().url().validate(currentUrl).catch(() => {
+    errors.push('invalidUrl');
+  });
+  mixed().notOneOf(addedURLs).validate(currentUrl).catch(() => {
+    errors.push('hasUrlYet');
+  });
   return errors;
 };
 
 const updateValidationState = (state) => {
   const { url } = state.form.fields;
-  const { addedURLs } = state;
+  const addedURLs = state.feeds.map((feed) => feed.url);
   const errors = validate(url, addedURLs);
   state.form.errors = errors;
   state.form.valid = _.isEqual(errors, []);
@@ -63,7 +51,7 @@ const parse = (xml) => {
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const checkForNewPosts = (currentState) => {
-  const urls = currentState.addedURLs;
+  const urls = currentState.feeds.map((feed) => feed.url);
   setTimeout(checkForNewPosts, 5000, currentState);
   urls.forEach((url) => {
     const corsUrl = `${corsApiUrl}${url}`;
@@ -79,8 +67,7 @@ const checkForNewPosts = (currentState) => {
         Array.prototype.push.apply(currentState.posts, diffPosts);
       })
       .catch((err) => {
-        const errorMessage = i18next.t('network.error');
-        currentState.form.errors = [errorMessage];
+        currentState.form.errors = ['network'];
         currentState.form.valid = false;
         currentState.form.processState = 'filling';
         throw err;

@@ -9,14 +9,10 @@ export default {
     addButton: 'Hinzufügen',
     feeds: 'Deine streams',
     posts: 'Deine beiträge',
-    network: {
-      error: 'Netzwerkprobleme. Versuchen Sie es erneut.',
-    },
-    hadUrlYet: {
-      error: 'Diese URL wurde bereits hinzugefügt',
-    },
-    url: {
-      error: 'Die eingegebene URL ist falsch',
+    errorMessages: {
+      network: 'Netzwerkprobleme. Versuchen Sie es erneut.',
+      hasUrlYet: 'Diese URL wurde bereits hinzugefügt',
+      invalidUrl: 'Die eingegebene URL ist falsch',
     },
   },
 };
