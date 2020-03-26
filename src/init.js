@@ -53,17 +53,20 @@ const containerInit = () => {
   containerDiv.classList.add('container-fluid');
   const rowDiv = document.createElement('div');
   rowDiv.classList.add('row');
+  const divElement = document.createElement('div');
+  divElement.classList.add('col-lg-3', 'border-right', 'mb-4');
   const feedDiv = document.createElement('div');
-  feedDiv.classList.add('col-md-3', 'feeds', 'border-right', 'mb-4');
+  feedDiv.classList.add('feeds');
+
   const postsDiv = document.createElement('div');
-  postsDiv.classList.add('col-md-9', 'posts');
-  rowDiv.append(feedDiv, postsDiv);
+  postsDiv.classList.add('col-lg-9', 'posts');
+  rowDiv.append(divElement, postsDiv);
   containerDiv.append(rowDiv);
   const feedHeadDiv = document.createElement('div');
   const feedHeader = document.createElement('h5');
   feedHeader.classList.add('feedHeader', 'text-center', 'border-bottom', 'mb-3', 'pb-sm-2');
   feedHeadDiv.append(feedHeader);
-  feedDiv.append(feedHeadDiv);
+  divElement.append(feedHeadDiv, feedDiv);
   return containerDiv;
 };
 

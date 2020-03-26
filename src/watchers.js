@@ -18,6 +18,49 @@ const renderPosts = (currentPosts) => {
   });
 };
 
+const deleteFeed = (state, id) => () => {
+  const { feeds, posts } = state;
+  state.feeds = feeds.filter((el) => el.id !== id);
+  state.posts = posts.filter((el) => el.feedId !== id);
+};
+
+const addFeed = (state, feed) => {
+  const feedsElement = document.querySelector('.feeds');
+  const { id, feedTitle, feedDescription } = feed;
+  const newAElement = document.createElement('a');
+  newAElement.setAttribute('href', '#');
+  newAElement.classList.add('list-group-item', 'list-group-item-action');
+  const innerDiv = document.createElement('div');
+  const header4 = document.createElement('h4');
+  header4.classList.add('mb-1', 'feedItem');
+  header4.textContent = feedTitle;
+  innerDiv.append(header4);
+  const newPElement = document.createElement('p');
+  newPElement.classList.add('mb-1');
+  newPElement.textContent = feedDescription;
+  newAElement.append(innerDiv, newPElement);
+  feedsElement.append(newAElement); // добавили поток в список потоков
+
+  // Добавляем кнопку "Close" и навешиваем на нее обработчик
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.classList.add('close');
+  closeButton.setAttribute('aria-label', 'close');
+  closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+  closeButton.addEventListener('click', deleteFeed(state, id));
+  newAElement.prepend(closeButton);
+
+  newAElement.addEventListener('click', () => {
+    const currentPosts = state.posts.filter((post) => post.feedId === id);
+    renderPosts(currentPosts);
+    const activeElement = feedsElement.querySelector('.active');
+    if (activeElement) {
+      activeElement.classList.remove('active');
+    }
+    newAElement.classList.add('active');
+  });
+};
+
 const watchState = (state) => {
   const input = document.querySelector('input[class="form-control"]');
   const form = document.querySelector('form');
@@ -63,9 +106,7 @@ const watchState = (state) => {
       input.classList.remove('is-invalid');
       errorElement.remove();
     }
-    if (errors.length === 0) {
-      return;
-    }
+    if (errors.length === 0) return;
     const feedbackElement = document.createElement('div');
     feedbackElement.classList.add('invalid-feedback', 'text-warning');
     const errorMessages = errors.map((err) => i18next.t(`errorMessages.${err}`));
@@ -76,39 +117,9 @@ const watchState = (state) => {
 
   watch(state, 'feeds', () => {
     const feedDivElement = document.querySelector('.feeds');
-    const activeFeedElement = feedDivElement.querySelector('.active');
-    if (activeFeedElement) {
-      activeFeedElement.classList.remove('active');
-    }
-    if (state.feeds.length === 1) {
-      const feedHeader = document.querySelector('.feedHeader');
-      feedHeader.textContent = i18next.t('feeds');
-    }
-    const currentFeed = state.feeds[state.feeds.length - 1];
-    const { id, feedTitle, feedDescription } = currentFeed;
-    const newAElement = document.createElement('a');
-    newAElement.setAttribute('href', '#');
-    newAElement.classList.add('list-group-item', 'list-group-item-action');
-    const innerDiv = document.createElement('div');
-    const header4 = document.createElement('h4');
-    header4.classList.add('mb-1', 'feedItem');
-    header4.textContent = feedTitle;
-    innerDiv.append(header4);
-    const newPElement = document.createElement('p');
-    newPElement.classList.add('mb-1');
-    newPElement.textContent = feedDescription;
-    newAElement.append(innerDiv, newPElement);
-    feedDivElement.append(newAElement); // добавили поток в список потоков
-
-    newAElement.addEventListener('click', () => { // обработчики кликов на потоки
-      const currentPosts = state.posts.filter((post) => post.feedId === id);
-      renderPosts(currentPosts);
-      const activeElement = feedDivElement.querySelector('.active');
-      if (activeElement) {
-        activeElement.classList.remove('active');
-      }
-      newAElement.classList.add('active');
-    });
+    feedDivElement.innerHTML = '';
+    const { feeds } = state;
+    feeds.forEach((feed) => addFeed(state, feed));
   });
 
   watch(state, 'posts', () => {
