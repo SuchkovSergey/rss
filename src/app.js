@@ -4,9 +4,9 @@ import i18next from 'i18next';
 import watchState from './watchers';
 import resources from './locales';
 import languages from './locales/languages';
-import { parse, updateValidationState, checkForNewPosts } from './utils';
-
-const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
+import {
+  parse, updateValidationState, checkForNewPosts, corsApiUrl,
+} from './utils';
 
 // В функции "updateContent" не стал отделять получение данных от их использования,
 // потому что в данном случае эти данные используются строго один раз

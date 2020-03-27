@@ -26,10 +26,12 @@ const dropButtonInit = () => {
   return divElement;
 };
 
-const headInit = () => {
+const imageUrl = 'https://images.wallpaperscraft.com/image/polygon_triangles_geometric_128478_1920x1080.jpg';
+
+const jumbotronInit = () => {
   const divElement = document.createElement('div');
   divElement.classList.add('jumbotron');
-  divElement.setAttribute('style', 'background-image: url(https://images.wallpaperscraft.com/image/polygon_triangles_geometric_128478_1920x1080.jpg); background-size: 100%;');
+  divElement.setAttribute('style', `background-image: url(${imageUrl}); background-size: 100%;`);
   const header3 = document.createElement('h3');
   header3.classList.add('display-6', 'text-light', 'ml-1');
   const header2 = document.createElement('h2');
@@ -39,11 +41,11 @@ const headInit = () => {
   const divFormElement = document.createElement('div');
   divFormElement.classList.add('form-group');
   divFormElement.innerHTML = '<input class="form-control" id="inputInfo" placeholder="">';
-  const button = document.createElement('button');
-  button.setAttribute('type', 'submit');
-  button.classList.add('btn', 'btn-primary');
-  button.textContent = i18next.t('addButton');
-  form.append(divFormElement, button);
+  const submitButton = document.createElement('button');
+  submitButton.setAttribute('type', 'submit');
+  submitButton.classList.add('btn', 'btn-primary');
+  submitButton.textContent = i18next.t('addButton');
+  form.append(divFormElement, submitButton);
   divElement.append(dropButtonInit(), header2, header3, form);
   return divElement;
 };
@@ -84,5 +86,5 @@ const footerInit = () => {
 
 export default () => {
   const element = document.getElementById('point');
-  element.append(headInit(), containerInit(), footerInit());
+  element.append(jumbotronInit(), containerInit(), footerInit());
 };

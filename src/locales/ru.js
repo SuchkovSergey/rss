@@ -10,7 +10,7 @@ export default {
     feeds: 'Ваши потоки',
     posts: 'Ваши посты',
     errorMessages: {
-      network: 'Проблемы с сетью. Попробуйте снова.',
+      network: 'Проблемы с сетью. Попробуйте снова',
       hasUrlYet: 'Данный URL уже добавлен',
       invalidUrl: 'Введенный URL некорректен',
     },

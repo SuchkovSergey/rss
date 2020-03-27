@@ -31,26 +31,22 @@ const addFeed = (state, feed) => {
   newAElement.setAttribute('href', '#');
   newAElement.classList.add('list-group-item', 'list-group-item-action');
   const innerDiv = document.createElement('div');
-  const header4 = document.createElement('h4');
-  header4.classList.add('mb-1', 'feedItem');
-  header4.textContent = feedTitle;
-  innerDiv.append(header4);
+  innerDiv.innerHTML = `<h4 class='mb-1 feedItem'>${feedTitle}</h4>`;
   const newPElement = document.createElement('p');
   newPElement.classList.add('mb-1');
   newPElement.textContent = feedDescription;
-  newAElement.append(innerDiv, newPElement);
   feedsElement.append(newAElement); // добавили поток в список потоков
 
-  // Добавляем кнопку "Close" и навешиваем на нее обработчик
-  const closeButton = document.createElement('button');
+  const closeButton = document.createElement('button'); // Добавляем кнопку "сlose"
   closeButton.type = 'button';
   closeButton.classList.add('close');
   closeButton.setAttribute('aria-label', 'close');
   closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
   closeButton.addEventListener('click', deleteFeed(state, id));
-  newAElement.prepend(closeButton);
 
-  newAElement.addEventListener('click', () => {
+  newAElement.append(closeButton, innerDiv, newPElement);
+
+  newAElement.addEventListener('click', () => { // Добавляем обработку клика на поток
     const currentPosts = state.posts.filter((post) => post.feedId === id);
     renderPosts(currentPosts);
     const activeElement = feedsElement.querySelector('.active');
@@ -109,8 +105,8 @@ const watchState = (state) => {
     if (errors.length === 0) return;
     const feedbackElement = document.createElement('div');
     feedbackElement.classList.add('invalid-feedback', 'text-warning');
-    const errorMessages = errors.map((err) => i18next.t(`errorMessages.${err}`));
-    feedbackElement.textContent = errorMessages.join('. ');
+    const errorMessages = errors.map((err) => i18next.t(`errorMessages.${err}`)).join('. ');
+    feedbackElement.textContent = errorMessages;
     input.classList.add('is-invalid');
     input.after(feedbackElement);
   });

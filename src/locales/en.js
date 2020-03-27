@@ -10,7 +10,7 @@ export default {
     feeds: 'Your feeds',
     posts: 'Your posts',
     errorMessages: {
-      network: 'Network Problems. Try again.',
+      network: 'Network Problems. Try again',
       hasUrlYet: 'This URL has already been added',
       invalidUrl: 'Value is not a valid url',
     },

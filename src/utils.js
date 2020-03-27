@@ -1,17 +1,23 @@
 /* eslint no-param-reassign: "error" */
-// import * as yup from 'yup';
 import _ from 'lodash';
 import axios from 'axios';
 import { string, mixed } from 'yup';
 
+const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
+
 const validate = (currentUrl, addedURLs) => {
   const errors = [];
-  string().url().validate(currentUrl).catch(() => {
-    errors.push('invalidUrl');
-  });
-  mixed().notOneOf(addedURLs).validate(currentUrl).catch(() => {
-    errors.push('hasUrlYet');
-  });
+  // Решил, что если сделать однострочник, он будет злым :)
+  string() // проверка на валидность URL
+    .url()
+    .validate(currentUrl)
+    .catch(() => { errors.push('invalidUrl'); });
+
+  mixed() // проверка на дублирование
+    .notOneOf(addedURLs)
+    .validate(currentUrl)
+    .catch(() => { errors.push('hasUrlYet'); });
+
   return errors;
 };
 
@@ -48,34 +54,29 @@ const parse = (xml) => {
   return { feed, posts };
 };
 
-const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
-
-const checkForNewPosts = (currentState) => {
-  const urls = currentState.feeds.map((feed) => feed.url);
-  setTimeout(checkForNewPosts, 5000, currentState);
+const checkForNewPosts = (state) => {
+  setTimeout(checkForNewPosts, 5000, state);
+  const { feeds } = state;
+  const urls = feeds.map((feed) => feed.url);
   urls.forEach((url) => {
     const corsUrl = `${corsApiUrl}${url}`;
     axios.get(corsUrl)
       .then((response) => {
-        const output = parse(response.data);
-        const { feed, posts } = output;
+        const { feed, posts } = parse(response.data);
         const { feedTitle } = feed;
-        const currentFeed = currentState.feeds.find((el) => el.feedTitle === feedTitle);
+        const currentFeed = feeds.find((el) => el.feedTitle === feedTitle);
         const { id } = currentFeed;
         const newPosts = posts.map((post) => ({ ...post, feedId: id }));
-        const diffPosts = _.differenceBy(newPosts, currentState.posts, 'postTitle');
-        Array.prototype.push.apply(currentState.posts, diffPosts);
+        const diffPosts = _.differenceBy(newPosts, state.posts, 'postTitle');
+        Array.prototype.push.apply(state.posts, diffPosts);
       })
-      .catch((err) => {
-        currentState.form.errors = ['network'];
-        currentState.form.valid = false;
-        currentState.form.processState = 'filling';
-        throw err;
-      });
+      .catch((err) => { throw err; });
   });
 };
 
-export { parse, updateValidationState, checkForNewPosts };
+export {
+  parse, updateValidationState, checkForNewPosts, corsApiUrl,
+};
 
 /*
 The structure of response xml is:

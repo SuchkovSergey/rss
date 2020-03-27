@@ -10,7 +10,7 @@ export default {
     feeds: 'Deine streams',
     posts: 'Deine beiträge',
     errorMessages: {
-      network: 'Netzwerkprobleme. Versuchen Sie es erneut.',
+      network: 'Netzwerkprobleme. Versuchen Sie es erneut',
       hasUrlYet: 'Diese URL wurde bereits hinzugefügt',
       invalidUrl: 'Die eingegebene URL ist falsch',
     },
