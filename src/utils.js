@@ -6,27 +6,27 @@ import { string, mixed } from 'yup';
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
 const validate = (currentUrl, addedURLs) => {
-  const errors = [];
-  // Решил, что если сделать однострочник, он будет злым :)
-  string() // проверка на валидность URL
-    .url()
-    .validate(currentUrl)
-    .catch(() => { errors.push('invalidUrl'); });
-
-  mixed() // проверка на дублирование
-    .notOneOf(addedURLs)
-    .validate(currentUrl)
-    .catch(() => { errors.push('hasUrlYet'); });
-
-  return errors;
+  let urlValidity;
+  return string().url().isValid(currentUrl)
+    .then((valid) => {
+      urlValidity = valid;
+    })
+    .then(() => mixed().notOneOf(addedURLs).isValid(currentUrl))
+    .then((doubleValidity) => new Promise((resolve) => {
+      const errors = [];
+      if (!urlValidity) { errors.push('invalidUrl'); }
+      if (!doubleValidity) { errors.push('hasUrlYet'); }
+      resolve(errors);
+    }));
 };
 
 const updateValidationState = (state) => {
   const { url } = state.form.fields;
   const addedURLs = state.feeds.map((feed) => feed.url);
-  const errors = validate(url, addedURLs);
-  state.form.errors = errors;
-  state.form.valid = _.isEqual(errors, []);
+  validate(url, addedURLs).then((errors) => {
+    state.form.errors = errors;
+    state.form.valid = _.isEqual(errors, []);
+  });
 };
 
 const parse = (xml) => {
