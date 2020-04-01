@@ -1,26 +1,28 @@
 /* eslint no-param-reassign: "error" */
 import _ from 'lodash';
 import axios from 'axios';
-import { string, mixed } from 'yup';
+import * as yup from 'yup';
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const validate = (currentUrl, addedURLs) => {
-  const errors = [];
-  return string().url().validate(currentUrl)
-    .catch(() => { errors.push('invalidUrl'); })
-    .then(() => mixed().notOneOf(addedURLs).validate(currentUrl))
-    .catch(() => { errors.push('hasUrlYet'); })
-    .then(() => new Promise((resolve) => { resolve(errors); }));
-};
+const validate = (currentUrl, addedURLs) => yup
+  .string()
+  .url('invalidUrl')
+  .required('')
+  .notOneOf(addedURLs, 'hasUrlYet')
+  .validate(currentUrl);
 
 const updateValidationState = (state) => {
   const { url } = state.form.fields;
   const addedURLs = state.feeds.map((feed) => feed.url);
   validate(url, addedURLs)
-    .then((errors) => {
-      state.form.errors = errors;
-      state.form.valid = _.isEqual(errors, []);
+    .then(() => {
+      state.form.errors = [];
+      state.form.valid = true;
+    })
+    .catch((err) => {
+      state.form.errors = err.errors;
+      state.form.valid = false;
     });
 };
 
