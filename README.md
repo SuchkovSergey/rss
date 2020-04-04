@@ -9,6 +9,16 @@ RSS aggregator is a site where you can add feeds you love.
 Add stream -> Click on post -> Enjoy!
 
 You could also click on feed's title to choose posts from it.
+Or you could close any feed if you're not interested in it anymore.
+
+### Available languages
+
+There are four languages in the you personal RSS aggregator: 
+
+* English (default)
+* Русский
+* Español
+* Deutsch
 
 ### New experience
 
@@ -18,7 +28,8 @@ You could also click on feed's title to choose posts from it.
 * Work with events
 * DOM manipulating
 * Validation, DOMParser
-* Deploy
+* Deploy (with Zeit)
+* I18next, language changing
 
 ### Installing
 

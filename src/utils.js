@@ -5,6 +5,7 @@ import * as yup from 'yup';
 
 const corsApiUrl = 'https://cors-anywhere.herokuapp.com/';
 
+// Validation text in the "input"
 const validate = (currentUrl, addedURLs) => yup
   .string()
   .url('invalidUrl')
@@ -26,6 +27,29 @@ const updateValidationState = (state) => {
     });
 };
 
+/*
+The function "parse" parses xml (string) to an object with the following structure:
+
+const response = {
+  feed: currentFeed,
+  posts: arrayOfPosts,
+}
+
+The structures of currentFeed and post objects are located below
+
+const currentFeed = {
+  id,
+  feedTitle,
+  feedDescription,
+}
+
+const post = {
+  feedId,
+  postTitle,
+  postDescription,
+  link,
+}
+*/
 const parse = (xml) => {
   const parser = new DOMParser();
   const dom = parser.parseFromString(xml, 'text/xml');
@@ -74,32 +98,3 @@ const checkForNewPosts = (state) => {
 export {
   parse, updateValidationState, checkForNewPosts, corsApiUrl,
 };
-
-/*
-The structure of response xml is:
-<channel> <title> <description> <item> <item> <item> <item> <item> </channel>
-
-Each <item> is:
-<item> <title> <description> <link> </item>
-
-The function "parse" parses xml (string) to an object with the following structure:
-
-const response = {
-  feed: currentFeed,
-  posts: arrayOfPosts,
-}
-
-The structures of currentFeed and post objects are located below
-
-const currentFeed = {
-  id,
-  feedTitle,
-  feedDescription,
-}
-const post = {
-  feedId,
-  postTitle,
-  postDescription,
-  link,
-}
-*/

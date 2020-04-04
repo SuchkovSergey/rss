@@ -2,6 +2,7 @@
 import { watch } from 'melanke-watchjs';
 import i18next from 'i18next';
 
+// Redrawing posts
 const renderPosts = (currentPosts) => {
   const postsDiv = document.querySelector('.posts');
   postsDiv.innerHTML = '';
@@ -18,12 +19,14 @@ const renderPosts = (currentPosts) => {
   });
 };
 
+// Deleting feed and relevant posts
 const deleteFeed = (state, id) => () => {
   const { feeds, posts } = state;
   state.feeds = feeds.filter((el) => el.id !== id);
   state.posts = posts.filter((el) => el.feedId !== id);
 };
 
+// Adding feed and relevant posts
 const addFeed = (state, feed) => {
   const feedsElement = document.querySelector('.feeds');
   const { id, feedTitle, feedDescription } = feed;
@@ -35,9 +38,10 @@ const addFeed = (state, feed) => {
   const newPElement = document.createElement('p');
   newPElement.classList.add('mb-1');
   newPElement.textContent = feedDescription;
-  feedsElement.append(newAElement); // добавили поток в список потоков
+  feedsElement.append(newAElement);
 
-  const closeButton = document.createElement('button'); // Добавляем кнопку "сlose"
+  // Initializing "close" button
+  const closeButton = document.createElement('button');
   closeButton.type = 'button';
   closeButton.classList.add('close');
   closeButton.setAttribute('aria-label', 'close');
@@ -46,7 +50,7 @@ const addFeed = (state, feed) => {
 
   newAElement.append(closeButton, innerDiv, newPElement);
 
-  newAElement.addEventListener('click', () => { // Добавляем обработку клика на поток
+  newAElement.addEventListener('click', () => {
     const currentPosts = state.posts.filter((post) => post.feedId === id);
     renderPosts(currentPosts);
     const activeElement = feedsElement.querySelector('.active');
@@ -57,6 +61,8 @@ const addFeed = (state, feed) => {
   });
 };
 
+// The main logic of "View" level
+// Tracking changes of state, makes changes to the DOM
 const watchState = (state) => {
   const input = document.querySelector('input[class="form-control"]');
   const form = document.querySelector('form');

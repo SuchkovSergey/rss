@@ -8,8 +8,7 @@ import {
   parse, updateValidationState, checkForNewPosts, corsApiUrl,
 } from './utils';
 
-// В функции "updateContent" не стал отделять получение данных от их использования,
-// потому что в данном случае эти данные используются строго один раз
+// Updating the text of the site when switching the language
 const updateContent = (state) => {
   document.querySelector('h2').textContent = i18next.t('header2');
   document.querySelector('h3').textContent = i18next.t('header3');
@@ -25,9 +24,7 @@ const updateContent = (state) => {
   }
 };
 
-// Немного скорректировал функцию "changeLangsInit", но не в плане обработчиков.
-// Не нашел подтверждения тому, что они навешиваются больше одного раза..
-// Отладочная печать тоже не выявила данную проблему
+// Initializing language changing
 const changeLangsInit = (currentState) => {
   const langs = Object.keys(languages);
   langs.forEach((lang) => {
@@ -49,7 +46,7 @@ const app = () => {
       fields: {
         url: '',
       },
-      errors: [], // коды ошибок. Например, ['network', 'hasUrlYet', 'invalidUrl']
+      errors: [],
       valid: false,
     },
   };
@@ -60,9 +57,6 @@ const app = () => {
     resources,
   }).then(() => updateContent(state));
 
-  // добавил в аргументы функции "updateContent" state, чтобы корректно менялись языки.
-  // Как я понял, в случае, когда функция "updateContent" ничего не принимала на вход,
-  // стоило написать "i18next.on('languageChanged', updateContent);"
   i18next.on('languageChanged', () => updateContent(state));
 
   const input = document.querySelector('input[id="inputInfo"]');
@@ -82,23 +76,23 @@ const app = () => {
     axios.get(url)
       .then((response) => {
         const { feed, posts } = parse(response.data);
-        const feedWithUrl = { ...feed, url: currentURL }; // добавляем урл в поток
+        const feedWithUrl = { ...feed, url: currentURL };
         state.posts = [...state.posts, ...posts];
         state.feeds.push(feedWithUrl);
         state.form.processState = 'finished';
         state.form.fields.url = '';
       })
       .catch((err) => {
-        state.form.errors = ['network']; // теперь храним не текст, а код ошибки
+        state.form.errors = ['network'];
         state.form.valid = false;
         state.form.processState = 'filling';
         throw err;
       });
   });
 
-  changeLangsInit(state);
-  checkForNewPosts(state);
-  watchState(state);
+  changeLangsInit(state); // Initialize language changing
+  checkForNewPosts(state);// Tracking new posts
+  watchState(state);// Tracking state changes
 };
 
 export default app;

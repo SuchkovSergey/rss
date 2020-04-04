@@ -8,7 +8,7 @@ const dropButtonInit = () => {
   dropButton.classList.add('btn', 'btn-info', 'dropdown-toggle', 'float-right');
   dropButton.id = 'dropButton';
   dropButton.setAttribute('data-toggle', 'dropdown');
-  dropButton.textContent = 'English';
+  dropButton.textContent = languages.en;
   const menuDivElement = document.createElement('div');
   menuDivElement.classList.add('dropdown-menu');
 
@@ -50,6 +50,8 @@ const jumbotronInit = () => {
   return divElement;
 };
 
+// Initializing the main part of the site
+// where feeds and posts will be located
 const containerInit = () => {
   const containerDiv = document.createElement('div');
   containerDiv.classList.add('container-fluid');
@@ -59,16 +61,16 @@ const containerInit = () => {
   divElement.classList.add('col-lg-3', 'border-right', 'mb-4');
   const feedDiv = document.createElement('div');
   feedDiv.classList.add('feeds');
-
-  const postsDiv = document.createElement('div');
-  postsDiv.classList.add('col-lg-9', 'posts');
-  rowDiv.append(divElement, postsDiv);
-  containerDiv.append(rowDiv);
   const feedHeadDiv = document.createElement('div');
   const feedHeader = document.createElement('h5');
   feedHeader.classList.add('feedHeader', 'text-center', 'border-bottom', 'mb-3', 'pb-sm-2');
   feedHeadDiv.append(feedHeader);
   divElement.append(feedHeadDiv, feedDiv);
+  const postsDiv = document.createElement('div');
+  postsDiv.classList.add('col-lg-9', 'posts');
+  rowDiv.append(divElement, postsDiv);
+  containerDiv.append(rowDiv);
+
   return containerDiv;
 };
 
@@ -84,6 +86,7 @@ const footerInit = () => {
   return footer;
 };
 
+// Connecting parts of the site to the "body"-element in DOM
 export default () => {
   const element = document.getElementById('point');
   element.append(jumbotronInit(), containerInit(), footerInit());
