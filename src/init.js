@@ -44,6 +44,7 @@ const jumbotronInit = () => {
   const submitButton = document.createElement('button');
   submitButton.setAttribute('type', 'submit');
   submitButton.classList.add('btn', 'btn-primary');
+  submitButton.disabled = true;
   submitButton.textContent = i18next.t('addButton');
   form.append(divFormElement, submitButton);
   divElement.append(dropButtonInit(), header2, header3, form);
