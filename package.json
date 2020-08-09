@@ -37,8 +37,13 @@
     "bootstrap": "^4.4.1",
     "cors-anywhere": "^0.4.1",
     "i18next": "^19.3.3",
+<<<<<<< HEAD
     "jquery": "^3.5.1",
     "lodash": "^4.17.19",
+=======
+    "jquery": "^3.5.0",
+    "lodash": "^4.17.15",
+>>>>>>> b9ef219b24ef0ced66b3ff17181369cdb309f5cf
     "melanke-watchjs": "^1.5.2",
     "popper.js": "^1.16.1",
     "yup": "^0.28.3"
