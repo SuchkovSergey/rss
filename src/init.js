@@ -71,7 +71,7 @@ const containerInit = () => {
   postsDiv.classList.add('col-lg-9', 'posts');
   rowDiv.append(divElement, postsDiv);
   containerDiv.append(rowDiv);
-
+  containerDiv.setAttribute('style', 'padding-bottom: 50px;');
   return containerDiv;
 };
 
