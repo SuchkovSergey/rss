@@ -33,6 +33,9 @@ const addFeed = (state, feed) => {
   const newAElement = document.createElement('a');
   newAElement.setAttribute('href', '#');
   newAElement.classList.add('list-group-item', 'list-group-item-action');
+  newAElement.addEventListener('click', (event) => {
+    event.preventDefault();
+  });
   const innerDiv = document.createElement('div');
   innerDiv.innerHTML = `<h4 class='mb-1 feedItem'>${feedTitle}</h4>`;
   const newPElement = document.createElement('p');
