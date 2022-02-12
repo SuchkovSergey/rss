@@ -1,6 +1,6 @@
 {
   "name": "rss_aggregator",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "",
   "scripts": {
     "build": "webpack"
@@ -45,14 +45,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sergey89274291549/frontend-project-lvl3.git"
   },
   "author": "Sergey Suchkov",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Sergey89274291549/frontend-project-lvl3/issues"
-  },
-  "homepage": "https://github.com/Sergey89274291549/frontend-project-lvl3#readme",
+  "homepage": "https://github.com/SergeySuchkov",
   "jest": {
     "testEnvironment": "node"
   }
