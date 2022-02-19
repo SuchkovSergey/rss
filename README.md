@@ -55,3 +55,10 @@ https://www.newyorker.com/feed/news
 https://lenta.ru/rss/news
 https://feeds.thelocal.com/rss/es
 ```
+
+### CORS troubles
+
+Due
+to [demo restrictions](https://github.com/Rob--W/cors-anywhere/issues/301#issuecomment-771210498)
+you should visit [this source]() and click on the "Request temporary access to the demo
+server" button.
