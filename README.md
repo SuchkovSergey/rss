@@ -1,4 +1,4 @@
-[![Node CI](https://github.com/Sergey89274291549/frontend-project-lvl3/workflows/Node.js%20CI/badge.svg)](https://github.com/Sergey89274291549/frontend-project-lvl3/actions)
+[![Node.js CI](https://github.com/SuchkovSergey/rss/actions/workflows/nodejs.yml/badge.svg)](https://github.com/SuchkovSergey/rss/actions/workflows/nodejs.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/bbfaa3ddf3bc2f552f23/maintainability)](https://codeclimate.com/github/SuchkovSergey/rss/maintainability)
 
 Welcome to your personal RSS
