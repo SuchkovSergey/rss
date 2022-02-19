@@ -2,7 +2,7 @@ import _ from 'lodash';
 import axios from 'axios';
 import * as yup from 'yup';
 import i18next from 'i18next';
-import { CORS_API_URL, STATE_TYPES } from './constants';
+import { CORS_API_URL, STATE_TYPES, CHECK_POSTS_TIMEOUT } from './constants';
 
 export const getErrorsText = (errors) => errors
     .map((text) => i18next.t(`errorMessages.${text}`))
@@ -50,7 +50,7 @@ const parseFeedXML = (xml) => {
 };
 
 export const checkForNewPosts = (state) => {
-    setTimeout(checkForNewPosts, 5000, state);
+    setTimeout(checkForNewPosts, CHECK_POSTS_TIMEOUT, state);
     const { feeds } = state;
     feeds.map(({ url }) => url)
         .forEach((url) => {
