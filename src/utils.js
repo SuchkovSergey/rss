@@ -5,7 +5,8 @@ import i18next from 'i18next';
 import { CORS_API_URL, STATE_TYPES } from './constants';
 
 export const getErrorsText = (errors) => errors
-    .map((err) => i18next.t(`errorMessages.${err}`)).join('. ');
+    .map((text) => i18next.t(`errorMessages.${text}`))
+    .join('. ');
 
 const validateCurrentUrl = (currentUrl, addedURLs) => yup
     .string()
@@ -28,29 +29,6 @@ const updateValidationState = (state) => {
         });
 };
 
-/*
-The function "parse" parses xml (string) to an object with the following structure:
-
-const response = {
-    feed: currentFeed,
-    posts: arrayOfPosts,
-}
-
-The structures of currentFeed and post objects are located below
-
-const currentFeed = {
-    id,
-    feedTitle,
-    feedDescription,
-}
-
-const post = {
-    feedId,
-    postTitle,
-    postDescription,
-    link,
-}
-*/
 const parseFeedXML = (xml) => {
     const parser = new DOMParser();
     const xmlDomTree = parser.parseFromString(xml, 'text/xml');

@@ -1,10 +1,9 @@
 [![Node.js CI](https://github.com/SuchkovSergey/rss/actions/workflows/nodejs.yml/badge.svg)](https://github.com/SuchkovSergey/rss/actions/workflows/nodejs.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/bbfaa3ddf3bc2f552f23/maintainability)](https://codeclimate.com/github/SuchkovSergey/rss/maintainability)
 
-Welcome to your personal RSS
-aggregator: [Click here](https://frontend-project-lvl3-eta.now.sh/)
+Welcome to [your RSS aggregator](https://rss-aggregator-sergey1996.vercel.app/)
 
-# RSS aggregator
+## RSS aggregator
 
 ### About
 
@@ -38,22 +37,26 @@ There are four languages in your personal RSS aggregator:
 ### Installing
 
 ```
-npm install rss_aggregator
+npm install
+```
+
+### Run in development mode
+
+```
+make develop
 ```
 
 ### Examples of URLs you could use
 
-```
-https://ru.hexlet.io/blog.rss
-https://ru.hexlet.io/jobs.rss
-https://abcnews.go.com/abcnews/usheadlines
-https://feeds.bbci.co.uk/news/world/rss.xml
-https://www.cbn.com/cbnnews/world/feed/
-https://feeds.nbcnews.com/nbcnews/public/news
-https://www.newyorker.com/feed/news
-https://lenta.ru/rss/news
-https://feeds.thelocal.com/rss/es
-```
+- https://ru.hexlet.io/blog.rss
+- https://ru.hexlet.io/jobs.rss
+- https://abcnews.go.com/abcnews/usheadlines
+- https://feeds.bbci.co.uk/news/world/rss.xml
+- https://www.cbn.com/cbnnews/world/feed/
+- https://feeds.nbcnews.com/nbcnews/public/news
+- https://www.newyorker.com/feed/news
+- https://lenta.ru/rss/news
+- https://feeds.thelocal.com/rss/es
 
 ### CORS troubles
 
