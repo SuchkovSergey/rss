@@ -1,6 +1,5 @@
 [![Node CI](https://github.com/Sergey89274291549/frontend-project-lvl3/workflows/Node.js%20CI/badge.svg)](https://github.com/Sergey89274291549/frontend-project-lvl3/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/bbfaa3ddf3bc2f552f23/maintainability)](https://codeclimate.com/github/SuchkovSergey/rss/maintainability)
-[![Build Status](https://travis-ci.com/Sergey89274291549/frontend-project-lvl3.svg?branch=master)](https://travis-ci.com/Sergey89274291549/frontend-project-lvl3)
 
 Welcome to your personal RSS
 aggregator: [Click here](https://frontend-project-lvl3-eta.now.sh/)
@@ -60,5 +59,5 @@ https://feeds.thelocal.com/rss/es
 
 Due
 to [demo restrictions](https://github.com/Rob--W/cors-anywhere/issues/301#issuecomment-771210498)
-you should visit [this source]() and click on the "Request temporary access to the demo
-server" button.
+you should visit [this source](https://cors-anywhere.herokuapp.com/corsdemo) and click on
+the "Request temporary access to the demo server" button.

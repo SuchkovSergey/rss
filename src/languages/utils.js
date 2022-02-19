@@ -1,44 +1,60 @@
 import i18next from 'i18next';
-import languages from './languages';
+import resources from './locales';
+import { getErrorsText } from '../utils';
+import { LANGUAGES } from '../constants';
 
 export const updateTexts = (state) => {
-    document.querySelector('.jumbotron__header').textContent = i18next.t('header2');
-    document.querySelector('.jumbotron__sub-header').textContent = i18next.t('header3');
-    document.querySelector('.jumbotron__submit').textContent = i18next.t('addButton');
-    document.querySelector('.feed-header').textContent = i18next.t('feeds');
-    const { errors } = state.form;
-    const errorMessages = errors.map((err) => i18next.t(`errorMessages.${err}`)).join('. ');
-    if (document.querySelector('.invalid-feedback')) {
-        document.querySelector('.invalid-feedback').textContent = errorMessages;
+    const jumbotronHeader = document.querySelector('.jumbotron__header');
+    const jumbotronSubHeader = document.querySelector('.jumbotron__sub-header');
+    const jumbotronSubmit = document.querySelector('.jumbotron__submit');
+    const feedsHeader = document.querySelector('.main-body__feeds-header');
+    const errorElement = document.querySelector('.invalid-feedback');
+    const urlInput = document.querySelector('.jumbotron__input');
+
+    jumbotronHeader.textContent = i18next.t('jumbotronHeader');
+    jumbotronSubHeader.textContent = i18next.t('jumbotronSubHeader');
+    jumbotronSubmit.textContent = i18next.t('jumbotronSubmit');
+    feedsHeader.textContent = i18next.t('feedsHeader');
+    if (errorElement) {
+        errorElement.textContent = getErrorsText(state.form.errors);
     }
-    if (document.querySelector('.jumbotron__input')) {
-        document.querySelector('.jumbotron__input').placeholder = i18next.t('inputPlaceholder');
+    if (urlInput) {
+        urlInput.placeholder = i18next.t('inputPlaceholder');
     }
 };
 
-// Initializing language changing
-export const changeLangsInit = (currentState) => {
-    const langs = Object.keys(languages);
-    langs.forEach((lang) => {
-        const currentButton = document.getElementById(lang);
+const changeLanguagesInit = (state) => {
+    Object.keys(LANGUAGES).forEach((language) => {
+        const currentButton = document.getElementById(language);
         currentButton.addEventListener('click', () => {
-            currentState.currentLang = languages[lang];
-            i18next.changeLanguage(lang);
+            state.currentLang = LANGUAGES[language];
+            i18next.changeLanguage(language);
         });
     });
 };
 
-export const dropButtonInit = () => {
+const dropButtonInit = () => {
     const dropButton = document.querySelector('.jumbotron__dropdown-button');
     const menuDivElement = document.querySelector('.jumbotron__dropdown-menu');
 
-    dropButton.textContent = languages.en;
-    Object.keys(languages).forEach((lang) => {
+    dropButton.textContent = LANGUAGES.en;
+    Object.keys(LANGUAGES).forEach((language) => {
         const langButton = document.createElement('a');
         langButton.classList.add('dropdown-item');
-        langButton.id = lang;
+        langButton.id = language;
         langButton.setAttribute('href', '#');
-        langButton.textContent = languages[lang];
+        langButton.textContent = LANGUAGES[language];
         menuDivElement.append(langButton);
     });
+};
+
+export const initializeI18next = (state) => {
+    dropButtonInit();
+    i18next.init({
+        lng: 'en',
+        debug: true,
+        resources,
+    }).then(() => updateTexts(state));
+    i18next.on('languageChanged', () => updateTexts(state));
+    changeLanguagesInit(state);
 };

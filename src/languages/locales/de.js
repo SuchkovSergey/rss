@@ -1,14 +1,13 @@
-import languages from '../languages';
+import { LANGUAGES } from '../../constants';
 
 export default {
     translation: {
-        languages,
-        header2: 'Ihr persönlicher RSS-Aggregator',
-        header3: 'Stream hier hinzufügen',
+        languages: LANGUAGES,
+        jumbotronHeader: 'Ihr persönlicher RSS-Aggregator',
+        jumbotronSubHeader: 'Stream hier hinzufügen',
         inputPlaceholder: 'Geben Sie eine gültige URL ein',
-        addButton: 'Hinzufügen',
-        feeds: 'Deine streams',
-        posts: 'Deine beiträge',
+        jumbotronSubmit: 'Hinzufügen',
+        feedsHeader: 'Deine streams',
         errorMessages: {
             network: 'Netzwerkprobleme. Versuchen Sie es erneut',
             hasUrlYet: 'Diese URL wurde bereits hinzugefügt',

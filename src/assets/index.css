@@ -1,0 +1,48 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+.jumbotron {
+    background: linear-gradient(to right, rgb(48, 232, 191), rgb(255, 130, 53))
+}
+
+.jumbotron__dropdown-button {
+    float: right;
+}
+
+.jumbotron__header {
+    color: #F8F9FA;
+    text-align: center;
+}
+
+.jumbotron__sub-header {
+    color: #F8F9FA;
+}
+
+.main-body__feeds-container {
+    margin-bottom: 1.5em;
+    border-right: 1px solid #DEE2E6;
+}
+
+.main-body__feeds-header {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.container-fluid {
+    padding-bottom: 50px;
+}
+
+.page-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #DEE2E6;
+    background-color: #F8F9FA;
+    padding: 10px 0 0 10px;
+}
+
+.page-footer__copyright {
+    text-align: center;
+    padding-bottom: 1rem;
+}

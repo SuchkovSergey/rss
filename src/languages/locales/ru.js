@@ -1,14 +1,13 @@
-import languages from '../languages';
+import { LANGUAGES } from '../../constants';
 
 export default {
     translation: {
-        languages,
-        header2: 'Ваш персональный RSS агрегатор',
-        header3: 'Добавьте поток здесь',
+        languages: LANGUAGES,
+        jumbotronHeader: 'Ваш персональный RSS агрегатор',
+        jumbotronSubHeader: 'Добавьте поток здесь',
         inputPlaceholder: 'Введите корректный URL',
-        addButton: 'Добавить',
-        feeds: 'Ваши потоки',
-        posts: 'Ваши посты',
+        jumbotronSubmit: 'Добавить',
+        feedsHeader: 'Ваши потоки',
         errorMessages: {
             network: 'Проблемы с сетью. Попробуйте снова',
             hasUrlYet: 'Данный URL уже добавлен',
