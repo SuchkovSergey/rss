@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { uniqueId, differenceBy } from 'lodash';
 import axios from 'axios';
 import * as yup from 'yup';
 import i18next from 'i18next';
@@ -32,19 +32,25 @@ const updateValidationState = (state) => {
 const parseFeedXML = (xml) => {
     const parser = new DOMParser();
     const xmlDomTree = parser.parseFromString(xml, 'text/xml');
-    const feedId = _.uniqueId();
+    const feedId = uniqueId();
     const channel = xmlDomTree.querySelector('channel');
     const feed = {
         id: feedId,
         feedTitle: channel.querySelector('title').textContent,
         feedDescription: channel.querySelector('description').textContent,
     };
-    const posts = [...channel.querySelectorAll('item')].map((item) => ({
-        feedId,
-        postTitle: item.querySelector('title').textContent,
-        postDescription: item.querySelector('description').textContent,
-        link: item.querySelector('link').textContent,
-    }));
+
+    const posts = [];
+    const postsNodes = channel.querySelectorAll('item');
+    for (let i = 0; i < postsNodes.length; i++) {
+        const item = postsNodes[i];
+        posts.push({
+            feedId,
+            postTitle: item.querySelector('title').textContent,
+            postDescription: item.querySelector('description').textContent,
+            link: item.querySelector('link').textContent,
+        })
+    }
 
     return { feed, posts };
 };
@@ -62,7 +68,7 @@ export const checkForNewPosts = (state) => {
                     const currentFeed = feeds.find((el) => el.feedTitle === feedTitle);
                     const { id } = currentFeed;
                     const newPosts = posts.map((post) => ({ ...post, feedId: id }));
-                    const diffPosts = _.differenceBy(newPosts, state.posts, 'postTitle');
+                    const diffPosts = differenceBy(newPosts, state.posts, 'postTitle');
                     Array.prototype.push.apply(state.posts, diffPosts);
                 })
                 .catch((err) => {
@@ -75,8 +81,9 @@ export const setListeners = (state) => {
     const input = document.querySelector('.jumbotron__input');
     const form = document.querySelector('form');
 
-    input.addEventListener('input', ({ target }) => {
+    input.addEventListener('input', (event) => {
         state.form.processState = STATE_TYPES.FILLING;
+        const target = event.target as HTMLInputElement;
         state.form.fields.url = target.value;
         updateValidationState(state);
     });
@@ -90,13 +97,13 @@ export const setListeners = (state) => {
             .then(({ data }) => {
                 const { feed, posts } = parseFeedXML(data);
                 const feedWithUrl = { ...feed, url: currentURL };
-                state.posts = [...state.posts, ...posts];
+                state.posts = [ ...state.posts, ...posts ];
                 state.feeds.push(feedWithUrl);
                 state.form.processState = STATE_TYPES.FINISHED;
                 state.form.fields.url = '';
             })
             .catch((err) => {
-                state.form.errors = ['network'];
+                state.form.errors = [ 'network' ];
                 state.form.valid = false;
                 state.form.processState = STATE_TYPES.FILLING;
                 throw err;

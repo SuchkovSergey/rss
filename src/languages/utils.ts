@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+// eslint-disable-next-line import/extensions
 import resources from './locales';
 import { getErrorsText } from '../utils';
 import { LANGUAGES } from '../constants';
@@ -9,8 +10,7 @@ export const updateTexts = (state) => {
     const jumbotronSubmit = document.querySelector('.jumbotron__submit');
     const feedsHeader = document.querySelector('.main-body__feeds-header');
     const errorElement = document.querySelector('.invalid-feedback');
-    const urlInput = document.querySelector('.jumbotron__input');
-
+    const urlInput = <HTMLInputElement>document.querySelector('.jumbotron__input');
     jumbotronHeader.textContent = i18next.t('jumbotronHeader');
     jumbotronSubHeader.textContent = i18next.t('jumbotronSubHeader');
     jumbotronSubmit.textContent = i18next.t('jumbotronSubmit');
