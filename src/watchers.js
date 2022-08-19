@@ -67,9 +67,9 @@ const updateFeeds = (state) => {
 // The main logic of "View" level
 // Tracking changes of state, makes changes to the DOM
 const watchState = (state) => {
-    const input = <HTMLInputElement>document.querySelector('.jumbotron__input');
+    const input = document.querySelector('.jumbotron__input');
     const form = document.querySelector('form');
-    const submitButton = <HTMLInputElement>form.querySelector('.jumbotron__submit');
+    const submitButton = form.querySelector('.jumbotron__submit');
 
     watch(state, 'currentLang', () => {
         const dropButton = document.querySelector('.jumbotron__dropdown-button');
